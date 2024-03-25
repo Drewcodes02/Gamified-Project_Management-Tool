@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics | Gamified Project Management Tool</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    <div class="container">
+        <h1>Task Analytics</h1>
+        <div>
+            <% analytics.forEach(function(analytic) { %>
+                <div>
+                    <h3>Status: <%= analytic._id %></h3>
+                    <p>Total Time Spent: <%= analytic.totalTimeSpent %> hours</p>
+                    <p>Average Time Spent: <%= analytic.averageTimeSpent %> hours</p>
+                    <p>Task Count: <%= analytic.count %></p>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+</body>
+</html>
