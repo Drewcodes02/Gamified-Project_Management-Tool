@@ -18,6 +18,7 @@
                         <p class="card-text" id="taskDescription">Task Description</p>
                         <p class="card-text"><small class="text-muted" id="taskDeadline">Deadline</small></p>
                         <p class="card-text" id="taskAssignee">Assignee</p>
+                        <p class="card-text" id="taskTimeSpent">Time Spent: <span id="timeSpent">0</span> hours</p>
                     </div>
                 </div>
                 <button class="btn btn-primary" id="updateTaskButton" data-toggle="modal" data-target="#updateTaskModal">Update Task</button>
@@ -58,6 +59,14 @@
                                 <option value="completed">Completed</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="workSessionStart">Work Session Start</label>
+                            <input type="datetime-local" class="form-control" id="workSessionStart" name="workSessionStart">
+                        </div>
+                        <div class="form-group">
+                            <label for="workSessionEnd">Work Session End</label>
+                            <input type="datetime-local" class="form-control" id="workSessionEnd" name="workSessionEnd">
+                        </div>
                         <button type="submit" class="btn btn-primary">Update Task</button>
                     </form>
                 </div>
@@ -78,12 +87,21 @@
                 document.getElementById('taskTitle').textContent = task.title;
                 document.getElementById('taskDescription').textContent = task.description;
                 document.getElementById('taskDeadline').textContent = `Deadline: ${new Date(task.deadline).toLocaleDateString()}`;
-                // Assume assignee details are included in the task response
                 if(task.assignee && task.assignee.username) {
                     document.getElementById('taskAssignee').textContent = `Assignee: ${task.assignee.username}`;
                 } else {
                     document.getElementById('taskAssignee').textContent = "Assignee: Unassigned";
                 }
+                // Calculate and display time spent on the task
+                let totalHours = 0;
+                if (task.workSessions && task.workSessions.length > 0) {
+                    task.workSessions.forEach(session => {
+                        const start = new Date(session.start);
+                        const end = new Date(session.end);
+                        totalHours += (end - start) / (1000 * 60 * 60); // Convert milliseconds to hours
+                    });
+                }
+                document.getElementById('timeSpent').textContent = totalHours.toFixed(2);
             })
             .catch(error => {
                 console.error('Error fetching task details:', error);
@@ -113,6 +131,8 @@
                     description: document.getElementById('description').value,
                     deadline: document.getElementById('deadline').value,
                     status: document.getElementById('status').value,
+                    workSessionStart: document.getElementById('workSessionStart').value,
+                    workSessionEnd: document.getElementById('workSessionEnd').value
                 };
 
                 fetch(`/api/tasks/${taskId}`, {

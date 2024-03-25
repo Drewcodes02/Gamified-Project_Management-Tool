@@ -6,11 +6,28 @@ router.get('/', async (req, res) => {
   try {
     const taskAnalytics = await Task.aggregate([
       {
+        $unwind: "$workSessions"
+      },
+      {
         $group: {
           _id: "$status",
-          totalTimeSpent: { $sum: "$timeSpent" },
-          averageTimeSpent: { $avg: "$timeSpent" },
+          totalTimeSpent: {
+            $sum: {
+              $divide: [
+                { $subtract: ["$workSessions.end", "$workSessions.start"] },
+                3600000 // Convert milliseconds to hours
+              ]
+            }
+          },
           count: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          totalTimeSpent: 1,
+          averageTimeSpent: { $divide: ["$totalTimeSpent", "$count"] },
+          count: 1
         }
       }
     ]);

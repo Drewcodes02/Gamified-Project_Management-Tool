@@ -8,6 +8,18 @@ exports.createTask = async (req, res) => {
       req.body.status = 'pending';
     }
 
+    // Handling work sessions input
+    if (req.body.workSessions && typeof req.body.workSessions === 'string') {
+      try {
+        req.body.workSessions = JSON.parse(req.body.workSessions);
+      } catch (error) {
+        console.error('Error parsing workSessions:', error);
+        return res.status(400).json({ message: 'Invalid workSessions format' });
+      }
+    } else {
+      req.body.workSessions = [];
+    }
+
     const task = new Task(req.body);
     await task.save();
     console.log(`Task created successfully with ID: ${task._id}`);
@@ -35,7 +47,18 @@ exports.getTask = async (req, res) => {
 
 exports.updateTask = async (req, res) => {
   try {
-    const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('assignee', 'username email');
+    const update = req.body;
+
+    // Handling work sessions update
+    if (req.body.workSessionStart && req.body.workSessionEnd) {
+      const workSession = {
+        start: new Date(req.body.workSessionStart),
+        end: new Date(req.body.workSessionEnd)
+      };
+      update.$push = { workSessions: workSession };
+    }
+
+    const task = await Task.findByIdAndUpdate(req.params.id, update, { new: true }).populate('assignee', 'username email');
     if (!task) {
       console.error(`Task not found for updating with ID: ${req.params.id}`);
       return res.status(404).json({ message: 'Task not found' });
