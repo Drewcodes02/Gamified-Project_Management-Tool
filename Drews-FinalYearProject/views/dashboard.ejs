@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/_head.ejs') %>
+  <body>
+<%- include('partials/_header.ejs') %>
+    <main role="main" class="container mt-4">
+      <div class="text-center">
+        <h1>Welcome to Drews-FinalYearProject Dashboard</h1>
+        <p>Select an option below to get started.</p>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <a href="/tasks" class="btn btn-primary w-100">Tasks</a>
+        </div>
+        <div class="col-md-4">
+          <a href="/gamification" class="btn btn-success w-100">Gamification</a>
+        </div>
+        <div class="col-md-4">
+          <a href="/profile" class="btn btn-info w-100">Profile</a>
+        </div>
+      </div>
+    </main>
+  </body>
+<%- include('partials/_footer.ejs') %>
+</html>

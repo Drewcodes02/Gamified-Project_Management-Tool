@@ -7,10 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalCloseBtn = document.querySelector("#taskCreationModal .close");
     const taskAssigneeSelect = document.getElementById("taskAssignee"); // Select element for assignees
 
-    // WebSocket initialization
-    const socketUrl = window.location.protocol.includes("https") ? "wss://" : "ws://" + window.location.host;
-    const socket = new WebSocket(socketUrl);
-
     function fetchTasksAndUpdateUI() {
         fetch('/api/tasks/all', {
             method: 'GET',
@@ -46,12 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Content-Type': 'application/json'
             }
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch assignees');
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(users => {
             users.forEach(user => {
                 const option = document.createElement("option");
@@ -115,7 +106,6 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             console.log('Task created successfully:', data);
             alert('Task created successfully');
-            socket.send(JSON.stringify({ type: 'taskCreated', data: taskData }));
             fetchTasksAndUpdateUI(); // Refresh the task list
             taskCreationModal.style.display = 'none';
         })
@@ -124,37 +114,4 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Failed to create task');
         });
     });
-
-    // WebSocket message handling
-    socket.onmessage = function(event) {
-        console.log("Raw message received:", event.data); // Logging the raw message for debugging
-
-        try {
-            const message = JSON.parse(event.data);
-            console.log("Parsed JSON message:", message);
-
-            if (message.type === 'taskCreated') {
-                console.log('New task created:', message.data);
-                fetchTasksAndUpdateUI(); // Refresh the task list whenever a new task is created
-            }
-        } catch (error) {
-            console.error('Error parsing message as JSON:', error);
-            console.log('Received plain text message:', event.data);
-        }
-    };
-
-    // WebSocket error handling
-    socket.onerror = function(error) {
-        console.error('WebSocket error:', error);
-    };
-
-    // WebSocket open handling
-    socket.onopen = function() {
-        console.log('WebSocket connection established');
-    };
-
-    // WebSocket close handling
-    socket.onclose = function() {
-        console.log('WebSocket connection closed');
-    };
 });

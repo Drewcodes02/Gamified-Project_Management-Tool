@@ -1,36 +1,26 @@
-const WebSocket = require('ws');
+const socketIo = require('socket.io');
 
 const setupWebSocket = (server) => {
-  const wss = new WebSocket.Server({ server });
+  const io = socketIo(server);
 
-  wss.on('connection', (ws) => {
-    console.log('A new client connected');
-    ws.on('message', (message) => {
-      console.log('Received message: %s', message);
-      // Broadcasting the message to all connected clients
-      broadcastMessage(wss, message, ws);
+  io.on('connection', (socket) => {
+    console.log('A new client connected', socket.id);
+
+    // Joining a specific room for a project
+    socket.on('joinProject', (projectId) => {
+      console.log(`Client ${socket.id} joined project ${projectId}`);
+      socket.join(projectId);
     });
-    ws.on('error', (error) => {
-      console.error('WebSocket error:', error.stack);
+
+    // Handling text messages in project rooms
+    socket.on('projectMessage', ({ projectId, message }) => {
+      console.log(`Message in project ${projectId}: ${message}`);
+      io.to(projectId).emit('newMessage', message);
     });
-    ws.send(JSON.stringify({ message: 'Welcome to the WebSocket server!' }));
 
-  });
-
-  wss.on('error', (error) => {
-    console.error('WebSocket Server error:', error.stack);
-  });
-};
-
-const broadcastMessage = (wss, message, senderWs) => {
-  wss.clients.forEach((client) => {
-    if (client !== senderWs && client.readyState === WebSocket.OPEN) {
-      client.send(message, (error) => {
-        if (error) {
-          console.error('Error broadcasting message:', error.stack);
-        }
-      });
-    }
+    socket.on('disconnect', () => {
+      console.log('Client disconnected', socket.id);
+    });
   });
 };
 

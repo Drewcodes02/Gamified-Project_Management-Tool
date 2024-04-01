@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/_head.ejs') %>
+  <body>
+<%- include('partials/_header.ejs') %>
+    <main role="main" class="container mt-4">
+      <h1>Tasks</h1>
+      <div class="my-4">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTaskModal">
+          Create Task
+        </button>
+      </div>
+      <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="createTaskModalLabel">New Task</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="createTaskForm">
+                <div class="mb-3">
+                  <label for="taskTitle" class="form-label">Title</label>
+                  <input type="text" class="form-control" id="taskTitle" name="title" required>
+                </div>
+                <div class="mb-3">
+                  <label for="taskDescription" class="form-label">Description</label>
+                  <textarea class="form-control" id="taskDescription" name="description" rows="3" required></textarea>
+                </div>
+                <div class="mb-3">
+                  <label for="taskAssignedTo" class="form-label">Assigned To</label>
+                  <input type="text" class="form-control" id="taskAssignedTo" name="assignedTo" required>
+                </div>
+                <div class="mb-3">
+                  <label for="taskStartDate" class="form-label">Start Date</label>
+                  <input type="date" class="form-control" id="taskStartDate" name="startDate" required>
+                </div>
+                <div class="mb-3">
+                  <label for="taskDueDate" class="form-label">Due Date</label>
+                  <input type="date" class="form-control" id="taskDueDate" name="dueDate" required>
+                </div>
+                <div class="mb-3">
+                  <label for="taskProgress" class="form-label">Progress</label>
+                  <input type="number" class="form-control" id="taskProgress" name="progress" min="0" max="100" required>
+                </div>
+                <button type="submit" class="btn btn-success">Create Task</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="tasksList">
+        <!-- Tasks will be loaded here dynamically -->
+      </div>
+    </main>
+    <script src="/js/main.js"></script>
+    <script>
+      document.getElementById('createTaskForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch('/tasks', {
+          method: 'POST',
+          body: JSON.stringify(Object.fromEntries(formData)),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}` // Use the stored JWT token for authorization
+          }
+        }).then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to create task');
+          }
+          return response.json();
+        })
+          .then(data => {
+            console.log('Task created:', data);
+            window.location.reload(); // Reload the page to update the task list
+          })
+          .catch(error => {
+            console.error('Error creating task:', error);
+            alert('Error creating task: ' + error.message);
+          });
+      });
+    </script>
+  </body>
+<%- include('partials/_footer.ejs') %>
+</html>

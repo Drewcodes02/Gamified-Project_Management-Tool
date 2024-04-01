@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const Task = require('../models/task'); // Assuming Task model is defined in models/task.js
+const authMiddleware = require('../middlewares/auth');
 const router = express.Router();
 
 router.get('/', (req, res) => {
@@ -60,6 +61,10 @@ router.get('/task', (req, res) => {
       console.error('Error fetching task details:', error);
       res.status(500).send('Error fetching task details');
     });
+});
+
+router.get('/leaderboard', authMiddleware, (req, res) => {
+  res.render('leaderboard');
 });
 
 router.use((req, res) => {

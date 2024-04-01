@@ -109,4 +109,15 @@ router.get('/users', authMiddleware, async (req, res) => {
   }
 });
 
+// Route to get the leaderboard
+router.get('/leaderboard', authMiddleware, async (req, res) => {
+  try {
+    const leaderboard = await User.find({}, 'username points -_id').sort({ points: -1 }).limit(10);
+    res.json(leaderboard);
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error);
+    res.status(500).json({ message: 'Error fetching leaderboard', error: error.message });
+  }
+});
+
 module.exports = router;
