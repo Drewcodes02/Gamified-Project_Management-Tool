@@ -6,6 +6,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const taskCreationModal = document.getElementById("taskCreationModal");
     const modalCloseBtn = document.querySelector("#taskCreationModal .close");
     const taskAssigneeSelect = document.getElementById("taskAssignee"); // Select element for assignees
+    const messageInput = document.getElementById("messageInput"); // INPUT_REQUIRED {Ensure you have an input field for messages with this ID}
+    const sendMessageButton = document.getElementById("sendMessage"); // INPUT_REQUIRED {Ensure you have a send message button with this ID}
+    const chatBox = document.getElementById("chatBox"); // INPUT_REQUIRED {Ensure you have a div for displaying chat messages with this ID}
+
+    // WebSocket initialization with socket.io
+    const socket = io(); // Assuming socket.io is correctly set up on the server side
+
+    // Joining a project-specific room
+    const projectId = 'PROJECT_ID_HERE'; // INPUT_REQUIRED {Replace with dynamic project ID}
+    socket.emit('joinProject', projectId);
+
+    // Sending a message
+    sendMessageButton.addEventListener('click', () => {
+        const message = messageInput.value;
+        socket.emit('projectMessage', { projectId, message });
+        messageInput.value = ''; // Clear the input after sending
+    });
+
+    // Receiving a message
+    socket.on('newMessage', (message) => {
+        const messageElement = document.createElement('p');
+        messageElement.textContent = message;
+        chatBox.appendChild(messageElement);
+    });
 
     function fetchTasksAndUpdateUI() {
         fetch('/api/tasks/all', {
@@ -106,6 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             console.log('Task created successfully:', data);
             alert('Task created successfully');
+            socket.emit('taskCreated', { type: 'taskCreated', data: taskData }); // Updated to use socket.io
             fetchTasksAndUpdateUI(); // Refresh the task list
             taskCreationModal.style.display = 'none';
         })

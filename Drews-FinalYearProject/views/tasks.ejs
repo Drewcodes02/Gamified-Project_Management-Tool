@@ -50,36 +50,54 @@
         </div>
       </div>
       <div id="tasksList">
-        <!-- Tasks will be loaded here dynamically -->
-      </div>
-    </main>
-    <script src="/js/main.js"></script>
+        <% if (tasks && tasks.length > 0) { %>
+          <% tasks.forEach(function(task) { %>
+            <div class="task">
+              <h3><%= task.title %></h3>
+              <p><%= task.description %></p>
+              <p>Assigned to: <%= task.assignedTo.join(', ') %></p>
+              <p>Due date: <%= new Date(task.dueDate).toLocaleDateString() %></p>
+              <p>Progress: <%= task.progress %>%</p>
+              <p>Status: <%= task.status %></p>
+              <button class="btn btn-primary" onclick="updateTask('<%= task._id %>')">Update</button>
+              <button class="btn btn-danger" onclick="deleteTask('<%= task._id %>')">Delete</button>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <p>No tasks found. Please create a new task.</p>
+        <% } %>
+       </div>
+     </main>
+     <script src="/js/main.js"></script>
     <script>
-      document.getElementById('createTaskForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        fetch('/tasks', {
-          method: 'POST',
-          body: JSON.stringify(Object.fromEntries(formData)),
+      function updateTask(taskId) {
+        // Redirect to task update page
+        window.location.href = `/tasks/update/${taskId}`;
+      }
+
+      function deleteTask(taskId) {
+        fetch(`/tasks/${taskId}`, {
+          method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}` // Use the stored JWT token for authorization
+            'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
           }
         }).then(response => {
           if (!response.ok) {
-            throw new Error('Failed to create task');
+            throw new Error('Failed to delete task');
           }
           return response.json();
         })
-          .then(data => {
-            console.log('Task created:', data);
-            window.location.reload(); // Reload the page to update the task list
-          })
-          .catch(error => {
-            console.error('Error creating task:', error);
-            alert('Error creating task: ' + error.message);
-          });
-      });
+        .then(data => {
+          console.log('Task deleted:', data);
+          alert('Task deleted successfully!');
+          window.location.reload();
+        })
+        .catch(error => {
+          console.error('Error deleting task:', error);
+          alert('Error deleting task: ' + error.message);
+        });
+      }
     </script>
   </body>
 <%- include('partials/_footer.ejs') %>

@@ -1,0 +1,114 @@
+/* Custom styles for the task dashboard and forms */
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.task {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.task h3 {
+    margin-top: 0;
+}
+
+.task p {
+    margin: 10px 0;
+}
+
+/* Style for buttons */
+.btn-primary, .btn-danger, .btn-success {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.btn-primary:hover, .btn-danger:hover, .btn-success:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+/* Modal styles */
+.modal-content {
+    padding: 20px;
+}
+
+.modal-header, .modal-body, .modal-footer {
+    padding: 20px;
+}
+
+/* Form styles */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-control {
+    margin-bottom: 15px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Leaderboard styles */
+.leaderboard {
+    margin-top: 20px;
+}
+
+.leaderboard th, .leaderboard td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.leaderboard th {
+    background-color: #f8f9fa;
+}
+
+/* Achievements styles */
+.achievements ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.achievements li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.achievements li:last-child {
+    border-bottom: none;
+}

@@ -10,8 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify(Object.fromEntries(formData)),
                 headers: {
                     'Content-Type': 'application/json',
-                    // Assuming the JWT token is stored in localStorage under 'jwtToken'
-                    'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+                    'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Ensure this matches the token key used in localStorage
                 }
             }).then(response => {
                 if (!response.ok) {
@@ -42,8 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify({ status: 'completed' }),
                 headers: {
                     'Content-Type': 'application/json',
-                    // Assuming the JWT token is stored in localStorage under 'jwtToken'
-                    'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+                    'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Ensure this matches the token key used in localStorage
                 }
             }).then(response => {
                 if (!response.ok) {
@@ -68,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (tasksList) {
         fetch('/tasks', {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Ensure this matches the token key used in localStorage
             }
         }).then(response => {
             if (!response.ok) {
@@ -86,6 +84,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p>Due date: ${new Date(task.dueDate).toLocaleDateString()}</p>
                         <p>Progress: ${task.progress}%</p>
                         <p>Status: ${task.status}</p>
+                        <button class="btn btn-primary" onclick="updateTask('${task._id}')">Update</button>
+                        <button class="btn btn-danger" onclick="deleteTask('${task._id}')">Delete</button>
                     </div>
                 `).join('');
                 tasksList.innerHTML = tasksHtml;
@@ -96,6 +96,35 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('Error fetching tasks:', error);
             tasksList.innerHTML = '<p>Error fetching tasks. Please try again later.</p>';
+        });
+    }
+
+    window.updateTask = function(taskId) {
+        // Redirect to task update page
+        window.location.href = `/tasks/edit/${taskId}`; // Updated to match the application's routing for task updates
+    }
+
+    window.deleteTask = function(taskId) {
+        fetch(`/tasks/${taskId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Ensure this matches the token key used in localStorage
+            }
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to delete task');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Task deleted:', data);
+            alert('Task deleted successfully!');
+            window.location.reload();
+        })
+        .catch(error => {
+            console.error('Error deleting task:', error);
+            alert('Error deleting task: ' + error.message);
         });
     }
 });

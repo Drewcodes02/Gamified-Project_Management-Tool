@@ -8,6 +8,8 @@ const indexRoutes = require('./routes/index');
 const analyticsRoutes = require('./routes/analytics');
 const http = require('http');
 const cookieParser = require('cookie-parser');
+const { setupWebSocket } = require('./controllers/wsController'); // Adjusted to use wsController for WebSocket setup
+const socketIo = require('socket.io'); // Added for socket.io integration
 
 const app = express();
 
@@ -40,6 +42,9 @@ app.use('*', (req, res) => {
 });
 
 const server = http.createServer(app);
+
+const io = socketIo(server); // Initialize socket.io on the server
+setupWebSocket(io); // Pass the socket.io instance to setupWebSocket for real-time communication setup
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
