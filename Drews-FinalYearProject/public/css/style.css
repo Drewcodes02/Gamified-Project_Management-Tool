@@ -3,7 +3,29 @@
 body {
     font-family: Arial, sans-serif;
 }
+/* Add this style to your CSS file or within a <style> tag in your HTML file */
 
+.navbar {
+    display: flex; /* This will create a flex container */
+    flex-direction: row; /* This will layout the flex items in a row */
+    justify-content: space-around; /* This will distribute space around items */
+    align-items: center; /* This will align items vertically */
+  }
+  
+  /* If you have list items within your nav, you may want to style them as well */
+  .navbar li {
+    list-style: none; /* This removes the default list styling */
+  }
+  
+  /* Style your links */
+  .navbar a {
+    text-decoration: none; /* This removes the underline from links */
+    padding: 10px; /* This adds some padding around the links */
+    color: #fff; /* This sets the text color */
+  }
+  
+  /* Add any additional styling as needed */
+  
 .task {
     border: 1px solid #ddd;
     padding: 20px;

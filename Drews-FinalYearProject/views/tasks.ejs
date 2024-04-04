@@ -49,6 +49,45 @@
           </div>
         </div>
       </div>
+      <div class="modal fade" id="updateTaskModal" tabindex="-1" aria-labelledby="updateTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="updateTaskModalLabel">Update Task</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="updateTaskForm">
+                <div class="mb-3">
+                  <label for="updateTaskTitle" class="form-label">Title</label>
+                  <input type="text" class="form-control" id="updateTaskTitle" name="title" required>
+                </div>
+                <div class="mb-3">
+                  <label for="updateTaskDescription" class="form-label">Description</label>
+                  <textarea class="form-control" id="updateTaskDescription" name="description" rows="3" required></textarea>
+                </div>
+                <div class="mb-3">
+                  <label for="updateTaskAssignedTo" class="form-label">Assigned To</label>
+                  <input type="text" class="form-control" id="updateTaskAssignedTo" name="assignedTo" required>
+                </div>
+                <div class="mb-3">
+                  <label for="updateTaskStartDate" class="form-label">Start Date</label>
+                  <input type="date" class="form-control" id="updateTaskStartDate" name="startDate" required>
+                </div>
+                <div class="mb-3">
+                  <label for="updateTaskDueDate" class="form-label">Due Date</label>
+                  <input type="date" class="form-control" id="updateTaskDueDate" name="dueDate" required>
+                </div>
+                <div class="mb-3">
+                  <label for="updateTaskProgress" class="form-label">Progress</label>
+                  <input type="number" class="form-control" id="updateTaskProgress" name="progress" min="0" max="100" required>
+                </div>
+                <button type="submit" class="btn btn-success">Update Task</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
       <div id="tasksList">
         <% if (tasks && tasks.length > 0) { %>
           <% tasks.forEach(function(task) { %>
@@ -59,7 +98,7 @@
               <p>Due date: <%= new Date(task.dueDate).toLocaleDateString() %></p>
               <p>Progress: <%= task.progress %>%</p>
               <p>Status: <%= task.status %></p>
-              <button class="btn btn-primary" onclick="updateTask('<%= task._id %>')">Update</button>
+              <button class="btn btn-primary" onclick="openUpdateModal('<%= task._id %>', '<%= task.title %>', '<%= task.description %>', '<%= task.assignedTo.join(', ') %>', '<%= task.startDate %>', '<%= task.dueDate %>', '<%= task.progress %>')">Update</button>
               <button class="btn btn-danger" onclick="deleteTask('<%= task._id %>')">Delete</button>
             </div>
           <% }); %>
@@ -70,9 +109,21 @@
      </main>
      <script src="/js/main.js"></script>
     <script>
-      function updateTask(taskId) {
-        // Redirect to task update page
-        window.location.href = `/tasks/update/${taskId}`;
+      function openUpdateModal(taskId, title, description, assignedTo, startDate, dueDate, progress) {
+        // Populate the update modal with the task's current data
+        document.getElementById('updateTaskTitle').value = title;
+        document.getElementById('updateTaskDescription').value = description;
+        document.getElementById('updateTaskAssignedTo').value = assignedTo;
+        document.getElementById('updateTaskStartDate').value = startDate;
+        document.getElementById('updateTaskDueDate').value = dueDate;
+        document.getElementById('updateTaskProgress').value = progress;
+
+        // Set the form action to update the task
+        document.getElementById('updateTaskForm').action = `/tasks/${taskId}`;
+
+        // Show the update modal
+        var updateModal = new bootstrap.Modal(document.getElementById('updateTaskModal'));
+        updateModal.show();
       }
 
       function deleteTask(taskId) {

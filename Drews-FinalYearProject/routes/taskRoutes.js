@@ -20,9 +20,10 @@ router.post('/tasks', isAuthenticated, async (req, res) => {
 // Get all tasks
 router.get('/tasks', isAuthenticated, async (req, res) => {
   try {
-    const tasks = await Task.find({});
+    const tasks = await Task.find({}).exec();
     console.log('Fetched all tasks');
-    res.render('tasks', { tasks: tasks }); // Modified to render tasks view instead of sending JSON
+    // Changed to always render the tasks page, even if no tasks are found
+    res.render('tasks', { tasks: tasks });
   } catch (error) {
     console.error(`Error fetching tasks: ${error.message}`, error.stack);
     res.status(500).send(error);
