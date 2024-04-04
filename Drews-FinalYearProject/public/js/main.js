@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+    document.addEventListener('DOMContentLoaded', function() {
 
     // Fetch and display tasks
     const tasksList = document.getElementById('tasksList');
@@ -175,4 +176,6 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Error deleting task: ' + error.message);
         });
     }
+});
+
 });
