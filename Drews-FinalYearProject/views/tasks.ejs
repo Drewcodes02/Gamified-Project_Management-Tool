@@ -57,7 +57,7 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <form id="updateTaskForm">
+              <form id="updateTaskForm" onsubmit="event.preventDefault(); updateTask();">
                 <div class="mb-3">
                   <label for="updateTaskTitle" class="form-label">Title</label>
                   <input type="text" class="form-control" id="updateTaskTitle" name="title" required>
@@ -72,7 +72,7 @@
                 </div>
                 <div class="mb-3">
                   <label for="updateTaskStartDate" class="form-label">Start Date</label>
-                  <input type="date" class="form-control" id="updateTaskStartDate" name="startDate" required>
+                  <input type="date" class="form-control" id="updateTaskStartDate" name="startDate">
                 </div>
                 <div class="mb-3">
                   <label for="updateTaskDueDate" class="form-label">Due Date</label>
@@ -82,6 +82,15 @@
                   <label for="updateTaskProgress" class="form-label">Progress</label>
                   <input type="number" class="form-control" id="updateTaskProgress" name="progress" min="0" max="100" required>
                 </div>
+                <div class="mb-3">
+                  <label for="updateTaskStatus" class="form-label">Status</label>
+                  <select class="form-control" id="updateTaskStatus" name="status" required>
+                    <option value="pending">Pending</option>
+                    <option value="inProgress">In Progress</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
+                <input type="hidden" id="updateTaskId" name="taskId">
                 <button type="submit" class="btn btn-success">Update Task</button>
               </form>
             </div>
@@ -98,7 +107,7 @@
               <p>Due date: <%= new Date(task.dueDate).toLocaleDateString() %></p>
               <p>Progress: <%= task.progress %>%</p>
               <p>Status: <%= task.status %></p>
-              <button class="btn btn-primary" onclick="openUpdateModal('<%= task._id %>', '<%= task.title %>', '<%= task.description %>', '<%= task.assignedTo.join(', ') %>', '<%= task.startDate %>', '<%= task.dueDate %>', '<%= task.progress %>')">Update</button>
+              <button class="btn btn-primary" onclick="openUpdateModal('<%= task._id %>', '<%= task.title %>', '<%= task.description %>', '<%= task.assignedTo.join(', ') %>', '<%= task.startDate %>', '<%= task.dueDate %>', '<%= task.progress %>', '<%= task.status %>')">Update</button>
               <button class="btn btn-danger" onclick="deleteTask('<%= task._id %>')">Delete</button>
             </div>
           <% }); %>
@@ -109,7 +118,7 @@
      </main>
      <script src="/js/main.js"></script>
     <script>
-      function openUpdateModal(taskId, title, description, assignedTo, startDate, dueDate, progress) {
+      function openUpdateModal(taskId, title, description, assignedTo, startDate, dueDate, progress, status) {
         // Populate the update modal with the task's current data
         document.getElementById('updateTaskTitle').value = title;
         document.getElementById('updateTaskDescription').value = description;
@@ -117,36 +126,47 @@
         document.getElementById('updateTaskStartDate').value = startDate;
         document.getElementById('updateTaskDueDate').value = dueDate;
         document.getElementById('updateTaskProgress').value = progress;
-
-        // Set the form action to update the task
-        document.getElementById('updateTaskForm').action = `/tasks/${taskId}`;
+        document.getElementById('updateTaskStatus').value = status;
+        document.getElementById('updateTaskId').value = taskId;
 
         // Show the update modal
         var updateModal = new bootstrap.Modal(document.getElementById('updateTaskModal'));
         updateModal.show();
       }
 
-      function deleteTask(taskId) {
+      function updateTask() {
+        const taskId = document.getElementById('updateTaskId').value;
+        const formData = {
+          title: document.getElementById('updateTaskTitle').value,
+          description: document.getElementById('updateTaskDescription').value,
+          assignedTo: document.getElementById('updateTaskAssignedTo').value.split(',').map(name => name.trim()),
+          startDate: document.getElementById('updateTaskStartDate').value,
+          dueDate: document.getElementById('updateTaskDueDate').value,
+          progress: document.getElementById('updateTaskProgress').value,
+          status: document.getElementById('updateTaskStatus').value,
+        };
+
         fetch(`/tasks/${taskId}`, {
-          method: 'DELETE',
+          method: 'PUT',
+          body: JSON.stringify(formData),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
           }
         }).then(response => {
           if (!response.ok) {
-            throw new Error('Failed to delete task');
+            throw new Error('Failed to update task');
           }
           return response.json();
         })
         .then(data => {
-          console.log('Task deleted:', data);
-          alert('Task deleted successfully!');
+          console.log('Task updated:', data);
+          alert('Task updated successfully!');
           window.location.reload();
         })
         .catch(error => {
-          console.error('Error deleting task:', error);
-          alert('Error deleting task: ' + error.message);
+          console.error('Error updating task:', error);
+          alert('Error updating task: ' + error.message);
         });
       }
     </script>

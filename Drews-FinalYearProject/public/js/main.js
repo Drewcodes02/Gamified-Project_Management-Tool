@@ -138,9 +138,10 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('updateTaskTitle').value = task.title;
             document.getElementById('updateTaskDescription').value = task.description;
             document.getElementById('updateTaskAssignedTo').value = task.assignedTo.join(', ');
-            document.getElementById('updateTaskStartDate').value = task.startDate.slice(0, 10); // Format date for input
+            document.getElementById('updateTaskStartDate').value = task.startDate ? task.startDate.slice(0, 10) : ''; // Format date for input
             document.getElementById('updateTaskDueDate').value = task.dueDate.slice(0, 10); // Format date for input
             document.getElementById('updateTaskProgress').value = task.progress;
+            document.getElementById('updateTaskStatus').value = task.status;
             // Show the update modal
             var updateModal = new bootstrap.Modal(document.getElementById('updateTaskModal'));
             updateModal.show();
