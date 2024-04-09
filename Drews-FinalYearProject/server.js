@@ -102,6 +102,16 @@ app.get("/dashboard", isAuthenticated, (req, res) => {
   res.render("dashboard");
 });
 
+// Analytics route
+app.get("/analytics", isAuthenticated, (req, res) => {
+  res.render("analytics");
+});
+
+// User Performance Page route
+app.get("/analytics/userPerformancePage", isAuthenticated, (req, res) => {
+  res.render("userPerformance");
+});
+
 // If no routes handled the request, it's a 404
 app.use((req, res, next) => {
   res.status(404).send("Page not found.");

@@ -60,9 +60,9 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-    document.addEventListener('DOMContentLoaded', function() {
 
     // Fetch and display tasks
+    document.addEventListener('DOMContentLoaded', function() {
     const tasksList = document.getElementById('tasksList');
     
     // Fetch tasks on page load

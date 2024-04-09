@@ -2,6 +2,7 @@ const express = require('express');
 const Task = require('../models/taskModel');
 const Gamification = require('../models/gamificationModel');
 const { isAuthenticated } = require('./middleware/authMiddleware');
+const { getTotalTasksCompleted, getTasksInProgress, getAverageCompletionTime, getUserPerformance } = require('../controllers/analyticsController');
 const router = express.Router();
 
 // Create a new task
@@ -114,6 +115,47 @@ router.delete('/tasks/:id', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error(`Error deleting task with ID ${req.params.id}: ${error.message}`, error.stack);
     res.status(500).send(error);
+  }
+});
+
+// Analytics endpoints
+router.get('/analytics/totalTasksCompleted', isAuthenticated, async (req, res) => {
+  try {
+    const totalTasksCompleted = await getTotalTasksCompleted();
+    res.json({ totalTasksCompleted });
+  } catch (error) {
+    console.error(`Error fetching total tasks completed: ${error.message}`, error.stack);
+    res.status(500).send('Error fetching total tasks completed');
+  }
+});
+
+router.get('/analytics/tasksInProgress', isAuthenticated, async (req, res) => {
+  try {
+    const tasksInProgress = await getTasksInProgress();
+    res.json({ tasksInProgress });
+  } catch (error) {
+    console.error(`Error fetching tasks in progress: ${error.message}`, error.stack);
+    res.status(500).send('Error fetching tasks in progress');
+  }
+});
+
+router.get('/analytics/averageCompletionTime', isAuthenticated, async (req, res) => {
+  try {
+    const averageCompletionTime = await getAverageCompletionTime();
+    res.json({ averageCompletionTime });
+  } catch (error) {
+    console.error(`Error fetching average completion time: ${error.message}`, error.stack);
+    res.status(500).send('Error fetching average completion time');
+  }
+});
+
+router.get('/analytics/userPerformance', isAuthenticated, async (req, res) => {
+  try {
+    const userPerformance = await getUserPerformance();
+    res.json({ userPerformance });
+  } catch (error) {
+    console.error(`Error fetching user performance: ${error.message}`, error.stack);
+    res.status(500).send('Error fetching user performance');
   }
 });
 

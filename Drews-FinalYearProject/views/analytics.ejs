@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/_head.ejs') %>
+  <body>
+<%- include('partials/_header.ejs') %>
+    <main role="main" class="container mt-4">
+      <h1>Analytics Dashboard</h1>
+      <div class="row">
+        <div class="col-md-6">
+          <h2>Total Tasks Completed</h2>
+          <p id="totalTasksCompleted">Loading...</p>
+        </div>
+        <div class="col-md-6">
+          <h2>Tasks In Progress</h2>
+          <p id="tasksInProgress">Loading...</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <h2>Average Completion Time</h2>
+          <p id="averageCompletionTime">Loading...</p>
+        </div>
+        <div class="col-md-6">
+          <h2>User Performance</h2>
+          <ul id="userPerformance">Loading...</ul>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <canvas id="userPerformanceChart"></canvas>
+        </div>
+      </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        fetch('/analytics/totalTasksCompleted')
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById('totalTasksCompleted').textContent = data.totalTasksCompleted;
+          })
+          .catch(error => {
+            console.error('Error fetching total tasks completed:', error);
+            document.getElementById('totalTasksCompleted').textContent = 'Error loading data';
+          });
+
+        fetch('/analytics/tasksInProgress')
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById('tasksInProgress').textContent = data.tasksInProgress;
+          })
+          .catch(error => {
+            console.error('Error fetching tasks in progress:', error);
+            document.getElementById('tasksInProgress').textContent = 'Error loading data';
+          });
+
+        fetch('/analytics/averageCompletionTime')
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById('averageCompletionTime').textContent = (data.averageCompletionTime / (1000 * 60 * 60 * 24)).toFixed(2) + ' days';
+          })
+          .catch(error => {
+            console.error('Error fetching average completion time:', error);
+            document.getElementById('averageCompletionTime').textContent = 'Error loading data';
+          });
+
+        fetch('/analytics/userPerformance')
+          .then(response => response.json())
+          .then(data => {
+            const userPerformanceList = document.getElementById('userPerformance');
+            userPerformanceList.innerHTML = '';
+            const usernames = [];
+            const tasksCompleted = [];
+            data.userPerformance.forEach(user => {
+              const listItem = document.createElement('li');
+              listItem.textContent = `${user.username}: ${user.tasksCompleted} tasks completed`;
+              userPerformanceList.appendChild(listItem);
+              usernames.push(user.username);
+              tasksCompleted.push(user.tasksCompleted);
+            });
+            const ctx = document.getElementById('userPerformanceChart').getContext('2d');
+            new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: usernames,
+                datasets: [{
+                  label: 'Tasks Completed',
+                  data: tasksCompleted,
+                  backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                  borderColor: 'rgba(54, 162, 235, 1)',
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: true
+                  }
+                }
+              }
+            });
+          })
+          .catch(error => {
+            console.error('Error fetching user performance:', error);
+            document.getElementById('userPerformance').textContent = 'Error loading data';
+          });
+      });
+    </script>
+  </body>
+<%- include('partials/_footer.ejs') %>
+</html>
