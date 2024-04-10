@@ -14,8 +14,47 @@
             <li><%= achievement %></li>
           <% }); %>
         </ul>
+        <h3>Performance</h3>
+        <p>Tasks Completed: <%= tasksCompleted %></p>
+        <p>Tasks In Progress: <%= tasksInProgress %></p>
+        <p>Average Completion Time: <%= averageCompletionTime %> milliseconds</p>
+        <div>
+          <canvas id="tasksCompletionChart"></canvas>
+        </div>
       </div>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var ctx = document.getElementById('tasksCompletionChart').getContext('2d');
+        var chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Tasks Completed', 'Tasks In Progress'],
+            datasets: [{
+              label: 'Tasks',
+              data: [<%= tasksCompleted %>, <%= tasksInProgress %>],
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)'
+              ],
+              borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      });
+    </script>
   </body>
 <%- include('partials/_footer.ejs') %>
 </html>

@@ -122,6 +122,7 @@ router.delete('/tasks/:id', isAuthenticated, async (req, res) => {
 router.get('/analytics/totalTasksCompleted', isAuthenticated, async (req, res) => {
   try {
     const totalTasksCompleted = await getTotalTasksCompleted();
+    console.log('Total tasks completed fetched');
     res.json({ totalTasksCompleted });
   } catch (error) {
     console.error(`Error fetching total tasks completed: ${error.message}`, error.stack);
@@ -132,6 +133,7 @@ router.get('/analytics/totalTasksCompleted', isAuthenticated, async (req, res) =
 router.get('/analytics/tasksInProgress', isAuthenticated, async (req, res) => {
   try {
     const tasksInProgress = await getTasksInProgress();
+    console.log('Tasks in progress fetched');
     res.json({ tasksInProgress });
   } catch (error) {
     console.error(`Error fetching tasks in progress: ${error.message}`, error.stack);
@@ -142,6 +144,7 @@ router.get('/analytics/tasksInProgress', isAuthenticated, async (req, res) => {
 router.get('/analytics/averageCompletionTime', isAuthenticated, async (req, res) => {
   try {
     const averageCompletionTime = await getAverageCompletionTime();
+    console.log('Average completion time fetched');
     res.json({ averageCompletionTime });
   } catch (error) {
     console.error(`Error fetching average completion time: ${error.message}`, error.stack);
@@ -152,6 +155,7 @@ router.get('/analytics/averageCompletionTime', isAuthenticated, async (req, res)
 router.get('/analytics/userPerformance', isAuthenticated, async (req, res) => {
   try {
     const userPerformance = await getUserPerformance();
+    console.log('User performance data fetched');
     res.json({ userPerformance });
   } catch (error) {
     console.error(`Error fetching user performance: ${error.message}`, error.stack);
