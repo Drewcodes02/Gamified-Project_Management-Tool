@@ -8,11 +8,15 @@ const authRoutes = require("./routes/authRoutes");
 const taskRoutes = require('./routes/taskRoutes'); // Added task routes
 const gamificationRoutes = require('./routes/gamificationRoutes'); // Import gamification routes
 const profileRoutes = require('./routes/profileRoutes'); // Import profile routes
+const chatRoutes = require('./routes/chatRoutes'); // Import chat routes
+const analyticsRoutes = require('./routes/analyticsRoutes'); // Import analytics routes
 const http = require('http');
 const WebSocket = require('ws');
 const { parse } = require('cookie');
 const { URL } = require('url');
 const { isAuthenticated } = require('./routes/middleware/authMiddleware'); // Import isAuthenticated middleware
+const socketIo = require('socket.io'); // Added for Socket.IO integration
+const Chat = require('./models/chatModel'); // Import Chat model for message persistence
 
 if (!process.env.DATABASE_URL || !process.env.SESSION_SECRET) {
   console.error("Error: config environment variables not set. Please create/edit .env configuration file.");
@@ -88,6 +92,12 @@ app.use(gamificationRoutes); // Registering gamification routes
 // Profile Routes
 app.use(profileRoutes); // Registering profile routes
 
+// Chat Routes
+app.use(chatRoutes); // Registering chat routes
+
+// Analytics Routes
+app.use('/analytics', analyticsRoutes); // Registering analytics routes
+
 // Root path response
 app.get("/", (req, res) => {
   if (req.session && req.session.userId) {
@@ -112,6 +122,11 @@ app.get("/analytics/userPerformancePage", isAuthenticated, (req, res) => {
   res.render("userPerformance");
 });
 
+// Settings Page route
+app.get("/settings", isAuthenticated, (req, res) => {
+  res.render("settings");
+});
+
 // If no routes handled the request, it's a 404
 app.use((req, res, next) => {
   res.status(404).send("Page not found.");
@@ -125,43 +140,64 @@ app.use((err, req, res, next) => {
 });
 
 const server = http.createServer(app);
+const io = socketIo(server); // Setup Socket.IO
+
+io.on('connection', (socket) => {
+  console.log('A user connected to Socket.IO');
+
+  socket.on('joinNotificationRoom', (userId) => {
+    socket.join(userId);
+    console.log(`User ${userId} joined notification room`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected from Socket.IO');
+  });
+});
+
 const wss = new WebSocket.Server({ noServer: true });
 
-wss.on('connection', function connection(ws) {
+wss.on('connection', function connection(ws, request) {
   ws.on('message', async function incoming(message) {
-    const chatMessage = JSON.parse(message);
-    // Save message to the database
     try {
-      await require('./models/chatModel').create(chatMessage);
+      const chatMessage = JSON.parse(message);
+      // Save message to the database
+      const savedMessage = await Chat.create({
+        sender: request.session.userId, // Sender's user ID from session
+        recipient: chatMessage.recipient, // Recipient's user ID from the message
+        message: chatMessage.message
+      });
+      console.log("Chat message saved to database:", savedMessage);
+
+      // Broadcast the message to the correct recipient
+      wss.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN && client.userId === chatMessage.recipient) {
+          client.send(JSON.stringify(savedMessage));
+          console.log("Message sent to recipient:", chatMessage.recipient);
+        }
+      });
     } catch (error) {
-      console.error(`Error saving chat message: ${error.message}`, error.stack);
+      console.error(`Error handling chat message: ${error.message}`, error.stack);
     }
-    // Broadcast to all clients
-    wss.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(message);
-      }
-    });
+  });
+
+  ws.on('close', function close() {
+    console.log('Client disconnected');
   });
 });
 
 server.on('upgrade', function upgrade(request, socket, head) {
-  const { pathname } = new URL(request.url, `http://${request.headers.host}`);
+  sessionMiddleware(request, {}, () => {
+    if (!request.session.userId) {
+      socket.destroy();
+      return;
+    }
 
-  if (pathname === '/chat') { // Assuming '/chat' is the WebSocket endpoint
-    sessionMiddleware(request, {}, () => {
-      if (!request.session.userId) {
-        socket.destroy();
-        return;
-      }
-
-      wss.handleUpgrade(request, socket, head, function done(ws) {
-        wss.emit('connection', ws, request);
-      });
+    wss.handleUpgrade(request, socket, head, function done(ws) {
+      ws.userId = request.session.userId; // Attach userId to WebSocket connection
+      wss.emit('connection', ws, request);
     });
-  } else {
-    socket.destroy();
-  }
+  });
 });
 
 server.listen(port, () => {

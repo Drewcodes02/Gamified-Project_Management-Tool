@@ -67,38 +67,18 @@ const getUserPerformance = async () => {
 };
 
 // Function to calculate user-specific performance
-const getUserSpecificPerformance = async (username) => {
+const getUserSpecificPerformance = async (userId) => {
   try {
-    const user = await User.findOne({ username: username });
+    const user = await User.findById(userId);
     if (!user) {
-      console.log(`User not found: ${username}`);
+      console.log(`User with ID ${userId} not found`);
       return null;
     }
-
-    const tasksCompletedCount = await Task.countDocuments({ assignedTo: username, status: 'completed' });
-    const tasksInProgressCount = await Task.countDocuments({ assignedTo: username, status: 'inProgress' });
-    const tasks = await Task.find({ assignedTo: username, status: 'completed' });
-
-    let totalCompletionTime = 0;
-    tasks.forEach(task => {
-      const startTime = task.startDate.getTime();
-      const endTime = task.dueDate.getTime();
-      totalCompletionTime += (endTime - startTime);
-    });
-
-    const averageCompletionTime = tasks.length > 0 ? totalCompletionTime / tasks.length : 0;
-
-    const userPerformance = {
-      username: username,
-      tasksCompleted: tasksCompletedCount,
-      tasksInProgress: tasksInProgressCount,
-      averageCompletionTime: averageCompletionTime
-    };
-
-    console.log(`User-specific performance: ${JSON.stringify(userPerformance)}`);
-    return userPerformance;
+    const completedTasksCount = await Task.countDocuments({ assignedTo: user.username, status: 'completed' });
+    console.log(`User-specific performance for ${user.username}: ${completedTasksCount} tasks completed`);
+    return { username: user.username, tasksCompleted: completedTasksCount };
   } catch (error) {
-    console.error(`Error fetching user-specific performance: ${error.message}`, error.stack);
+    console.error(`Error fetching user-specific performance for user ID ${userId}: ${error.message}`, error.stack);
     throw error;
   }
 };

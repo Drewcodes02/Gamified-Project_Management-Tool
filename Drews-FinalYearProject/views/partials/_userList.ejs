@@ -1,0 +1,11 @@
+<ul class="list-group">
+  <% users.forEach(function(user) { %>
+    <li class="list-group-item list-group-item-action" onclick="selectUser('<%= user.username %>')">
+      <%= user.username %>
+    </li>
+  <% }); %>
+</ul>
+
+<div id="chatContainer" class="chat-container">
+  <!-- Chat messages will be dynamically inserted here -->
+</div>

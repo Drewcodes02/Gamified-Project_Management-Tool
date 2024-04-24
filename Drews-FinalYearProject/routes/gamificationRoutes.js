@@ -26,4 +26,20 @@ router.get('/gamification', isAuthenticated, async (req, res) => {
   }
 });
 
+// New route to fetch gamification points for the dashboard
+router.get('/gamification/points', isAuthenticated, async (req, res) => {
+  try {
+    const gamificationData = await Gamification.findOne({ userId: req.session.userId });
+    if (!gamificationData) {
+      console.log(`No gamification data found for user ID: ${req.session.userId}`);
+      return res.status(404).json({ message: "Gamification data not found for the user." });
+    }
+    console.log(`Fetched gamification points for user ID: ${req.session.userId}`);
+    res.json({ points: gamificationData.points });
+  } catch (error) {
+    console.error(`Error fetching gamification points for user ID ${req.session.userId}: ${error.message}`, error.stack);
+    res.status(500).json({ message: "Error fetching gamification points", error: error.message });
+  }
+});
+
 module.exports = router;

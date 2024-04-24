@@ -1,8 +1,9 @@
 const express = require('express');
 const Task = require('../models/taskModel');
 const Gamification = require('../models/gamificationModel');
-const { isAuthenticated } = require('./middleware/authMiddleware');
-const { getTotalTasksCompleted, getTasksInProgress, getAverageCompletionTime, getUserPerformance } = require('../controllers/analyticsController');
+const Notification = require('../models/notificationModel');
+const { isAuthenticated } = require('./middleware/authMiddleware'); // Updated path to reflect new location
+const { ObjectId } = require('mongoose').Types; // Import ObjectId
 const router = express.Router();
 
 // Create a new task
@@ -11,6 +12,29 @@ router.post('/tasks', isAuthenticated, async (req, res) => {
     const task = new Task(req.body);
     await task.save();
     console.log(`Task created: ${task.title}`);
+
+    // Notify assigned users
+    let assignedUsers = [];
+    if (Array.isArray(req.body.assignedTo)) {
+      assignedUsers = req.body.assignedTo;
+    } else {
+      assignedUsers = [req.body.assignedTo]; // Ensure assignedUsers is always an array
+    }
+
+    const notificationPromises = assignedUsers.map(async (userId) => {
+      if (!ObjectId.isValid(userId)) {
+        console.error(`Invalid userId: ${userId}`);
+        return Promise.resolve(); // Skip invalid userIds
+      }
+      const notification = new Notification({
+        userId: new ObjectId(userId), // Ensure userId is cast to ObjectId
+        message: `You have been assigned a new task: ${task.title}`,
+        link: `/tasks/${task._id}`
+      });
+      await notification.save();
+    });
+    await Promise.all(notificationPromises);
+
     res.status(201).send({ message: "Task successfully created", task });
   } catch (error) {
     console.error(`Error creating task: ${error.message}`, error.stack);
@@ -115,51 +139,6 @@ router.delete('/tasks/:id', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error(`Error deleting task with ID ${req.params.id}: ${error.message}`, error.stack);
     res.status(500).send(error);
-  }
-});
-
-// Analytics endpoints
-router.get('/analytics/totalTasksCompleted', isAuthenticated, async (req, res) => {
-  try {
-    const totalTasksCompleted = await getTotalTasksCompleted();
-    console.log('Total tasks completed fetched');
-    res.json({ totalTasksCompleted });
-  } catch (error) {
-    console.error(`Error fetching total tasks completed: ${error.message}`, error.stack);
-    res.status(500).send('Error fetching total tasks completed');
-  }
-});
-
-router.get('/analytics/tasksInProgress', isAuthenticated, async (req, res) => {
-  try {
-    const tasksInProgress = await getTasksInProgress();
-    console.log('Tasks in progress fetched');
-    res.json({ tasksInProgress });
-  } catch (error) {
-    console.error(`Error fetching tasks in progress: ${error.message}`, error.stack);
-    res.status(500).send('Error fetching tasks in progress');
-  }
-});
-
-router.get('/analytics/averageCompletionTime', isAuthenticated, async (req, res) => {
-  try {
-    const averageCompletionTime = await getAverageCompletionTime();
-    console.log('Average completion time fetched');
-    res.json({ averageCompletionTime });
-  } catch (error) {
-    console.error(`Error fetching average completion time: ${error.message}`, error.stack);
-    res.status(500).send('Error fetching average completion time');
-  }
-});
-
-router.get('/analytics/userPerformance', isAuthenticated, async (req, res) => {
-  try {
-    const userPerformance = await getUserPerformance();
-    console.log('User performance data fetched');
-    res.json({ userPerformance });
-  } catch (error) {
-    console.error(`Error fetching user performance: ${error.message}`, error.stack);
-    res.status(500).send('Error fetching user performance');
   }
 });
 

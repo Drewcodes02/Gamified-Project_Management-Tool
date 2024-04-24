@@ -1,46 +1,37 @@
-<!-- Bootstrap CSS -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<nav class="navbar navbar-expand-md navbar-dark bg-dark">
-  <a class="navbar-brand" href="/">Task Triumph</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include('../partials/_head.ejs') %>
+</head>
+<body>
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar -->
+        <div class="bg-light border-right" id="sidebar-wrapper">
+            <div class="sidebar-heading">Task Triumph</div>
+            <div class="list-group list-group-flush">
+                <a href="/" class="list-group-item list-group-item-action bg-light">Home</a>
+                <% if (session && session.userId) { %>
+                <a href="/tasks" class="list-group-item list-group-item-action bg-light">Tasks</a>
+                <a href="/gamification" class="list-group-item list-group-item-action bg-light">Gamification</a>
+                <a href="/profile" class="list-group-item list-group-item-action bg-light">Profile</a>
+                <a href="/analytics" class="list-group-item list-group-item-action bg-light">Analytics</a>
+                <a href="/chat" class="list-group-item list-group-item-action bg-light">Chat</a>
+                <a href="/settings" class="list-group-item list-group-item-action bg-light">Settings</a>
+                <a href="/auth/logout" class="list-group-item list-group-item-action bg-light">Logout</a>
+                <% } else { %>
+                <a href="/auth/login" class="list-group-item list-group-item-action bg-light">Login</a>
+                <% } %>
+            </div>
+        </div>
+        <!-- /#sidebar-wrapper -->
+    </div>
+    <!-- /#wrapper -->
 
-  <!-- jQuery, Popper.js, and Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav mr-auto"> <!-- mr-auto will push the nav items to the left -->
-      <li class="nav-item">
-        <a class="nav-link" href="/">Home</a>
-      </li>
-      <% if (session && session.userId) { %>
-      <li class="nav-item">
-        <a class="nav-link" href="/tasks">Tasks</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/gamification">Gamification</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/profile">Profile</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/analytics">Analytics</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/analytics/userPerformancePage">User Performance</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/auth/logout">Logout</a>
-      </li>
-      <% } else { %>
-      <li class="nav-item">
-        <a class="nav-link" href="/auth/login">Login</a>
-      </li>
-      <% } %>
-    </ul>
-  </div>
-</nav>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- jQuery, Popper.js, and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

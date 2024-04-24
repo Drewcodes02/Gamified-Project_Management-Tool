@@ -2,35 +2,82 @@
 
 body {
     font-family: Arial, sans-serif;
+    background-color: #f4f4f4; /* Lighter background for a modern look */
+    color: #333; /* Darker text for better readability */
+    padding-top: 0; /* Adjusted for sidebar */
+    padding-left: 15rem; /* Space for sidebar */
 }
-/* Add this style to your CSS file or within a <style> tag in your HTML file */
 
-.navbar {
-    display: flex; /* This will create a flex container */
-    flex-direction: row; /* This will layout the flex items in a row */
-    justify-content: space-around; /* This will distribute space around items */
-    align-items: center; /* This will align items vertically */
-  }
-  
-  /* If you have list items within your nav, you may want to style them as well */
-  .navbar li {
-    list-style: none; /* This removes the default list styling */
-  }
-  
-  /* Style your links */
-  .navbar a {
-    text-decoration: none; /* This removes the underline from links */
-    padding: 10px; /* This adds some padding around the links */
-    color: #fff; /* This sets the text color */
-  }
-  
-  /* Add any additional styling as needed */
-  
+/* Sidebar Styles */
+#sidebar-wrapper {
+    min-height: 100vh;
+    width: 15rem;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    background-color: #004085; /* Updated to match main theme */
+    transition: all 0.3s ease;
+    box-shadow: 3px 0 10px rgba(0,0,0,0.2); /* Shadow for depth */
+}
+
+#sidebar-wrapper .sidebar-heading {
+    padding: 0.875rem 1.25rem;
+    font-size: 1.2rem;
+}
+
+#sidebar-wrapper .list-group {
+    width: 100%;
+}
+
+#sidebar-wrapper .list-group-item {
+    padding: 0.75rem 1.25rem;
+    text-align: center;
+    background-color: #0062cc; /* Adjusted to a different shade of blue for contrast */
+    border: none; /* Remove default border */
+    color: #000000; /* Ensure text is visible */
+}
+
+#sidebar-wrapper .list-group-item:hover, #sidebar-wrapper .list-group-item:focus {
+    background-color: #0056b3; /* Hover background color */
+    color: #fff; /* Hover text color */
+    text-decoration: none;
+}
+
+/* Adjust main content padding when sidebar is toggled */
+#page-content-wrapper {
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-left: 0;
+    }
+    #sidebar-wrapper {
+        width: 60px;
+    }
+    #sidebar-wrapper .list-group-item {
+        text-align: center;
+        padding: 0.75rem 0.5rem;
+    }
+    #sidebar-wrapper .sidebar-heading, #sidebar-wrapper .list-group-item {
+        display: none; /* Hide text for small screens */
+    }
+    #sidebar-wrapper:hover .sidebar-heading, #sidebar-wrapper:hover .list-group-item {
+        display: block; /* Show text on hover */
+    }
+}
+
+/* Improved navbar styling removed, as navbar is now a sidebar */
+
 .task {
     border: 1px solid #ddd;
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 5px;
+    background-color: #fff; /* Added background color for tasks */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Added shadow for depth */
 }
 
 .task h3 {
@@ -41,7 +88,7 @@ body {
     margin: 10px 0;
 }
 
-/* Style for buttons */
+/* Enhanced button styles for a more modern look */
 .btn-primary, .btn-danger, .btn-success {
     color: #fff;
     background-color: #007bff;
@@ -55,6 +102,7 @@ body {
     transition-duration: 0.4s;
     cursor: pointer;
     border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Added shadow for depth */
 }
 
 .btn-primary:hover, .btn-danger:hover, .btn-success:hover {
@@ -82,7 +130,6 @@ body {
     border-color: #1e7e34;
 }
 
-/* Modal styles */
 .modal-content {
     padding: 20px;
 }
@@ -91,7 +138,6 @@ body {
     padding: 20px;
 }
 
-/* Form styles */
 form {
     display: flex;
     flex-direction: column;
@@ -103,16 +149,18 @@ form {
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    background-color: #fff; /* Added background color for form controls */
 }
 
-/* Leaderboard styles */
-.leaderboard {
-    margin-top: 20px;
+/* Leaderboard and achievements styles for a cohesive look */
+.leaderboard, .achievements {
+    background-color: #fff; /* Added background color */
+    padding: 20px; /* Added padding */
+    border-radius: 5px; /* Added border radius */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Added shadow for depth */
 }
 
-.leaderboard th, .leaderboard td {
-    padding: 10px;
-    text-align: left;
+.leaderboard th, .leaderboard td, .achievements li {
     border-bottom: 1px solid #ddd;
 }
 
@@ -120,17 +168,74 @@ form {
     background-color: #f8f9fa;
 }
 
-/* Achievements styles */
 .achievements ul {
     list-style-type: none;
     padding: 0;
 }
 
-.achievements li {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
-
 .achievements li:last-child {
     border-bottom: none;
+}
+
+/* User Privacy Settings styles */
+.user-privacy-settings {
+    margin-top: 20px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-privacy-settings h2 {
+    margin-top: 0;
+}
+
+.user-privacy-settings .form-check-label, .user-privacy-settings label {
+    display: block;
+    margin: 10px 0;
+}
+
+.user-privacy-settings .form-control {
+    display: block;
+    width: 100%;
+    margin: 10px 0 20px 0;
+}
+
+.user-privacy-settings button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Dashboard Widgets Styles */
+.dashboard-widgets .widget {
+  background-color: #007bff; /* First widget color */
+  color: #fff; /* Text color for better readability */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  height: 100%;
+}
+
+.dashboard-widgets .widget:nth-child(2) {
+  background-color: #17a2b8; /* Second widget color */
+}
+
+.dashboard-widgets .widget:nth-child(3) {
+  background-color: #28a745; /* Third widget color */
+}
+
+.dashboard-widgets .widget:nth-child(4) {
+  background-color: #ffc107; /* Fourth widget color */
+}
+
+.dashboard-widgets .progress {
+  background-color: #ffffff;
+}
+
+.dashboard-widgets .progress-bar {
+  background-color: #007bff;
 }

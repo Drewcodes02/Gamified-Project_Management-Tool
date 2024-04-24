@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/_head.ejs') %>
+  <body>
+<%- include('partials/_header.ejs') %>
+    <main role="main" class="container mt-4">
+      <h1>Chat</h1>
+      <div class="row">
+        <div class="col-md-4">
+          <ul id="userList" class="list-group">
+            <% users.forEach(function(user) { %>
+              <li class="list-group-item list-group-item-action" onclick="selectUser('<%= user._id %>', '<%= user.username %>')"><%= user.username %></li>
+            <% }); %>
+          </ul>
+        </div>
+        <div class="col-md-8">
+          <div id="chatMessagesContainer" class="chat-messages-container" style="height: 300px; overflow-y: scroll;">
+            <!-- Chat messages will be dynamically inserted here by the client-side script -->
+          </div>
+          <input type="text" id="messageInput" placeholder="Type a message..." class="form-control mt-3">
+          <button id="sendMessageBtn" class="btn btn-primary mt-2">Send</button>
+        </div>
+      </div>
+      <input type="hidden" id="userId" value="<%= userId %>">
+    </main>
+  </body>
+<%- include('partials/_footer.ejs') %>
+  <script src="/js/main.js"></script>
+  <script>
+    let selectedUser = null;
+    let selectedUserId = null; // Added to store the selected user's ID
+
+    // WebSocket connection setup
+    const chatSocket = new WebSocket((window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/chat'); 
+    chatSocket.onmessage = function(event) {
+        try {
+            const messageData = JSON.parse(event.data);
+            if (messageData.sender === selectedUserId || messageData.recipient === selectedUserId) {
+                displayChatMessage(messageData);
+            }
+        } catch (error) {
+            console.error('Error parsing message data:', error);
+            alert('Error parsing message data. Check the console for more details.');
+        }
+    };
+
+    function sendMessage(message) {
+        if (!selectedUserId) {
+            alert('Please select a user to send a message.');
+            return;
+        }
+        const userId = document.getElementById('userId').value; // Fetch userId from hidden input
+        const messageData = { message: message, sender: userId, recipient: selectedUserId };
+        chatSocket.send(JSON.stringify(messageData));
+        displayChatMessage({ sender: "You", message: message }); // Display the message immediately in the chat
+    }
+
+    function displayChatMessage(messageData) {
+        const chatMessagesContainer = document.getElementById('chatMessagesContainer');
+        const messageElement = document.createElement('div');
+        messageElement.textContent = `${messageData.sender}: ${messageData.message}`;
+        chatMessagesContainer.appendChild(messageElement);
+        chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight; // Scroll to the bottom to show the latest message
+    }
+
+    function selectUser(userId, username) {
+        selectedUserId = userId; // Store the selected user's ID
+        selectedUser = username; // Store the selected user's username for display purposes
+        document.getElementById('chatMessagesContainer').innerHTML = ''; // Clear previous chat messages
+        // Fetch and display the chat history with the selected user
+        fetch(`/chat/history/${userId}`) // Adjusted to fetch by userId
+          .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch chat history');
+            }
+            return response.json();
+          })
+          .then(messages => {
+              messages.forEach(displayChatMessage);
+          })
+          .catch(error => {
+              console.error('Error fetching chat history:', error);
+              alert('Error fetching chat history. Check the console for more details.');
+          });
+    }
+
+    document.getElementById('sendMessageBtn').addEventListener('click', function() {
+        const messageInput = document.getElementById('messageInput');
+        if (messageInput.value.trim() !== '') {
+            sendMessage(messageInput.value);
+            messageInput.value = ''; // Clear the input after sending
+        } else {
+            console.error('Message input is empty.');
+            alert('Please enter a message before sending.');
+        }
+    });
+
+    chatSocket.onerror = function(error) {
+        console.error('WebSocket Error:', error);
+        alert('WebSocket encountered an error. Check the console for more details.');
+    };
+  </script>
+</html>
