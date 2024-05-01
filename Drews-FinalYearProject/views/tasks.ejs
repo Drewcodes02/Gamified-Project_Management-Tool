@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('partials/_head.ejs') %>
-  <body>
+  <body style="background-color: #3498db;">
 <%- include('partials/_header.ejs') %>
-    <main role="main" class="container mt-4">
-      <h1>Tasks</h1>
-      <div class="my-4">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTaskModal">
-          Create Task
-        </button>
+    <main role="main" class="container mt-4" style="color: #fff;">
+      <div class="text-center" style="background-color: #3498db;">
+        <h1>Tasks</h1>
+        <p>Welcome to your task manager. Here you can create, update, and delete tasks to keep your projects organized.</p>
+        <div class="my-4">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTaskModal">
+            Create Task
+          </button>
+        </div>
       </div>
+
+      <!-- Create Task Modal -->
       <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-          <div class="modal-content">
+          <div class="modal-content" style="background-color: #fff; color: #000;">
             <div class="modal-header">
               <h5 class="modal-title" id="createTaskModalLabel">New Task</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -31,13 +36,15 @@
                   <label for="taskAssignedTo" class="form-label">Assigned To</label>
                   <input type="text" class="form-control" id="taskAssignedTo" name="assignedTo" required>
                 </div>
-                <div class="mb-3">
-                  <label for="taskStartDate" class="form-label">Start Date</label>
-                  <input type="date" class="form-control" id="taskStartDate" name="startDate" required>
-                </div>
-                <div class="mb-3">
-                  <label for="taskDueDate" class="form-label">Due Date</label>
-                  <input type="date" class="form-control" id="taskDueDate" name="dueDate" required>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="taskStartDate" class="form-label">Start Date</label>
+                    <input type="date" class="form-control" id="taskStartDate" name="startDate" required>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="taskDueDate" class="form-label">Due Date</label>
+                    <input type="date" class="form-control" id="taskDueDate" name="dueDate" required>
+                  </div>
                 </div>
                 <div class="mb-3">
                   <label for="taskProgress" class="form-label">Progress</label>
@@ -49,9 +56,11 @@
           </div>
         </div>
       </div>
+
+      <!-- Update Task Modal -->
       <div class="modal fade" id="updateTaskModal" tabindex="-1" aria-labelledby="updateTaskModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-          <div class="modal-content">
+          <div class="modal-content" style="background-color: #fff; color: #000;">
             <div class="modal-header">
               <h5 class="modal-title" id="updateTaskModalLabel">Update Task</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -70,13 +79,15 @@
                   <label for="updateTaskAssignedTo" class="form-label">Assigned To</label>
                   <input type="text" class="form-control" id="updateTaskAssignedTo" name="assignedTo" required>
                 </div>
-                <div class="mb-3">
-                  <label for="updateTaskStartDate" class="form-label">Start Date</label>
-                  <input type="date" class="form-control" id="updateTaskStartDate" name="startDate">
-                </div>
-                <div class="mb-3">
-                  <label for="updateTaskDueDate" class="form-label">Due Date</label>
-                  <input type="date" class="form-control" id="updateTaskDueDate" name="dueDate" required>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="updateTaskStartDate" class="form-label">Start Date</label>
+                    <input type="date" class="form-control" id="updateTaskStartDate" name="startDate">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="updateTaskDueDate" class="form-label">Due Date</label>
+                    <input type="date" class="form-control" id="updateTaskDueDate" name="dueDate" required>
+                  </div>
                 </div>
                 <div class="mb-3">
                   <label for="updateTaskProgress" class="form-label">Progress</label>
@@ -97,26 +108,32 @@
           </div>
         </div>
       </div>
+
+      <!-- Tasks List -->
       <div id="tasksList">
         <% if (tasks && tasks.length > 0) { %>
           <% tasks.forEach(function(task) { %>
-            <div class="task">
+            <div class="task" style="background-color: #fff; border-radius: 10px; padding: 20px; margin-bottom: 20px; color: #000; display: flex; flex-direction: column; align-items: center;">
               <h3><%= task.title %></h3>
               <p><%= task.description %></p>
               <p>Assigned to: <%= task.assignedTo.join(', ') %></p>
-              <p>Due date: <%= new Date(task.dueDate).toLocaleDateString() %></p>
-              <p>Progress: <%= task.progress %>%</p>
+              <p>Start date: <%= new Date(task.startDate).toLocaleDateString() %></p>
+              <div class="progress" style="width: 100%;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: <%= task.progress %>%;" aria-valuenow="<%= task.progress %>" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
               <p>Status: <%= task.status %></p>
               <button class="btn btn-primary" onclick="openUpdateModal('<%= task._id %>', '<%= task.title %>', '<%= task.description %>', '<%= task.assignedTo.join(', ') %>', '<%= task.startDate %>', '<%= task.dueDate %>', '<%= task.progress %>', '<%= task.status %>')">Update</button>
               <button class="btn btn-danger" onclick="deleteTask('<%= task._id %>')">Delete</button>
             </div>
           <% }); %>
         <% } else { %>
-          <p>No tasks found. Please create a new task.</p>
+          <div class="alert alert-info" role="alert">
+            No tasks found. Please create a new task.
+          </div>
         <% } %>
-       </div>
-     </main>
-     <script src="/js/main.js"></script>
+      </div>
+    </main>
+    <script src="/js/main.js"></script>
     <script>
       function openUpdateModal(taskId, title, description, assignedTo, startDate, dueDate, progress, status) {
         // Populate the update modal with the task's current data

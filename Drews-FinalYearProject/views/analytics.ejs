@@ -1,39 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('partials/_head.ejs') %>
-  <body>
+<body style="background-color: #3498db; font-family: Arial, sans-serif; color: #fff;">
 <%- include('partials/_header.ejs') %>
-    <main role="main" class="container mt-4">
-      <h1>Analytics Dashboard</h1>
-      <div class="row">
-        <div class="col-md-6">
-          <h2>Total Tasks Completed</h2>
-          <p id="totalTasksCompleted">Loading...</p>
-        </div>
-        <div class="col-md-6">
-          <h2>Tasks In Progress</h2>
-          <p id="tasksInProgress">Loading...</p>
-        </div>
+<main role="main" class="container mt-4">
+  <div class="jumbotron text-center mb-4" style="background-color: #3498db;">
+    <h1 class="display-4">Analytics Dashboard</h1>
+    <p class="lead">Gain insights into your project performance.</p>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="data-section bg-primary rounded p-4 mb-4">
+        <h2 class="text-center mb-4">Total Tasks Completed</h2>
+        <p class="text-center" id="totalTasksCompleted">Loading...</p>
       </div>
-      <div class="row">
-        <div class="col-md-6">
-          <h2>Average Completion Time</h2>
-          <p id="averageCompletionTime">Loading...</p>
-        </div>
-        <div class="col-md-6">
-          <h2>User Performance</h2>
-          <ul id="userPerformance">Loading...</ul>
-        </div>
+      <div class="data-section bg-success rounded p-4 mb-4">
+        <h2 class="text-center mb-4">Tasks In Progress</h2>
+        <p class="text-center" id="tasksInProgress">Loading...</p>
       </div>
-      <div class="row">
-        <div class="col-md-12">
-          <canvas id="userPerformanceChart"></canvas>
-        </div>
+      <div class="data-section bg-warning rounded p-4">
+        <h2 class="text-center mb-4">Average Completion Time</h2>
+        <p class="text-center" id="averageCompletionTime">Loading...</p>
       </div>
-    </main>
+    </div>
+    <div class="col-md-6">
+      <div class="graph-container bg-white rounded p-4">
+        <canvas id="userPerformanceChart"></canvas>
+      </div>
+      <div class="data-section bg-info rounded p-4 mt-4">
+        <h2 class="text-center mb-4">User Performance</h2>
+        <ul class="text-center" id="userPerformance">Loading...</ul>
+      </div>
+    </div>
+  </div>
+</main>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
+        
         fetch('/analytics/totalTasksCompleted')
           .then(response => response.json())
           .then(data => {
@@ -86,15 +90,28 @@
                 datasets: [{
                   label: 'Tasks Completed',
                   data: tasksCompleted,
-                  backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                  borderColor: 'rgba(54, 162, 235, 1)',
+                  backgroundColor: 'rgba(255, 99, 132, 0.8)', // Adjusted color for user performance
+                  borderColor: 'rgba(255, 99, 132, 1)', // Red color for borders
                   borderWidth: 1
                 }]
               },
               options: {
                 scales: {
+                  x: {
+                    ticks: {
+                      color: '#000', // Black color for x-axis labels
+                    },
+                    grid: {
+                      color: 'rgba(0, 0, 0, 0.1)', // Customize the color of x-axis grid lines
+                    }
+                  },
                   y: {
-                    beginAtZero: true
+                    ticks: {
+                      color: '#000', // Black color for y-axis labels
+                    },
+                    grid: {
+                      color: 'rgba(0, 0, 0, 0.1)', // Customize the color of y-axis grid lines
+                    }
                   }
                 }
               }

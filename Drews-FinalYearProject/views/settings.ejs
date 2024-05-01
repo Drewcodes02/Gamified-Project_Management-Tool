@@ -1,43 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('partials/_head.ejs') %>
-<body>
+<body style="background-color: #3498db;">
 <%- include('partials/_header.ejs') %>
-<section class="user-privacy-settings mt-4">
-
-<main role="main" class="container mt-4">
-  <h1>Settings</h1>
-  <form id="updateProfileForm" action="/profile/updateProfile" method="POST">
+<main role="main" class="container mt-4" style="color: #000;">
+  <h1 style="color: #fff; text-align: center;">Settings</h1>
+  <p style="color: #fff; text-align: center;">Manage your profile and privacy settings here.</p>
+  
+  <form id="updateProfileForm" action="/profile/updateProfile" method="POST" class="mt-4" style="background-color: #fff; padding: 20px; border-radius: 10px;">
     <div class="form-group">
-      <label for="username">New Username:</label>
+      <label for="username" style="color: #000;">New Username:</label>
       <input type="text" class="form-control" name="username" id="username" placeholder="New Username" required>
     </div>
     <button type="submit" class="btn btn-primary">Update Profile</button>
   </form>
   
-  <form id="changePasswordForm" action="/profile/changePassword" method="POST" class="mt-4">
+  <!-- Change Password Form -->
+  <form id="changePasswordForm" action="/profile/changePassword" method="POST" class="mt-4" style="background-color: #fff; padding: 20px; border-radius: 10px;">
     <div class="form-group">
-      <label for="currentPassword">Current Password:</label>
+      <label for="currentPassword" style="color: #000;">Current Password:</label>
       <input type="password" class="form-control" name="currentPassword" id="currentPassword" placeholder="Current Password" required>
     </div>
     <div class="form-group">
-      <label for="newPassword">New Password:</label>
+      <label for="newPassword" style="color: #000;">New Password:</label>
       <input type="password" class="form-control" name="newPassword" id="newPassword" placeholder="New Password" required>
     </div>
     <button type="submit" class="btn btn-primary">Change Password</button>
   </form>
   
-  <section class="user-privacy-settings mt-4">
+  <!-- User Privacy Settings Form -->
+  <section class="user-privacy-settings mt-4" style="background-color: #fff; padding: 20px; border-radius: 10px;">
     <h2>User Privacy Settings</h2>
     <form id="privacySettingsForm" action="/profile/privacySettings" method="POST">
       <div class="form-check">
         <input class="form-check-input" type="checkbox" name="dataSharingPreferences" id="dataSharingPreferences">
-        <label class="form-check-label" for="dataSharingPreferences">
+        <label class="form-check-label" for="dataSharingPreferences" style="color: #000;">
           Allow sharing of personal data within the project or with third parties
         </label>
       </div>
       <div class="form-group">
-        <label for="activityVisibility">Activity Visibility</label>
+        <label for="activityVisibility" style="color: #000;">Activity Visibility</label>
         <select class="form-control" name="activityVisibility" id="activityVisibility">
           <option value="public">Public</option>
           <option value="private">Private</option>
@@ -46,7 +48,7 @@
       </div>
       <div class="form-check">
         <input class="form-check-input" type="checkbox" name="notificationPreferences" id="notificationPreferences">
-        <label class="form-check-label" for="notificationPreferences">
+        <label class="form-check-label" for="notificationPreferences" style="color: #000;">
           Customize notification preferences
         </label>
       </div>
@@ -54,7 +56,6 @@
     </form>
   </section>
 </main>
-<script src="/js/settings.js"></script>
 <%- include('partials/_footer.ejs') %>
 </body>
 </html>

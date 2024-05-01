@@ -1,82 +1,133 @@
-<div class="dashboard-widgets row text-center">
-  <div class="col-md-3 mb-4">
-    <div class="widget bg-primary p-3">
-      <h5>Tasks Completed</h5>
-      <p id="tasks-completed">Loading...</p>
+<div class="dashboard-widgets-container">
+  <div class="dashboard-widgets row text-center">
+    <div class="col-md-3 mb-4">
+      <div class="widget bg-primary p-3" style="border: 1px solid white; border-radius: 10px;">
+        <h5>Tasks Completed</h5>
+        <p id="tasks-completed">Loading...</p>
+      </div>
     </div>
-  </div>
-  <div class="col-md-3 mb-4">
-    <div class="widget bg-success p-3">
-      <h5>Total Points</h5>
-      <p id="total-points">Loading...</p>
+    <div class="col-md-3 mb-4">
+      <div class="widget bg-success p-3" style="border: 1px solid white; border-radius: 10px;">
+        <h5>Total Points</h5>
+        <p id="total-points">Loading...</p>
+      </div>
     </div>
-  </div>
-  <div class="col-md-3 mb-4">
-    <div class="widget bg-info p-3">
-      <h5>Task Progress</h5>
-      <div class="progress">
-        <div id="task-progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+    <div class="col-md-3 mb-4">
+      <div class="widget bg-info p-3" style="border: 1px solid white; border-radius: 10px;">
+        <h5>Task Progress</h5>
+        <div class="progress">
+          <div class="progress-bar" id="task-progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <span id="progress-label">0%</span>
+      </div>
+    </div>
+    
+    
+    <div class="col-md-3 mb-4">
+      <div class="widget bg-warning p-3" style="border: 1px solid white; border-radius: 10px;">
+        <h5>Messages</h5>
+        <p id="messages-count">0</p>
       </div>
     </div>
   </div>
-  <div class="col-md-3 mb-4">
-    <div class="widget bg-warning p-3">
-      <h5>Messages</h5>
-      <p id="messages-count">3</p>
-    </div>
-  </div>
 </div>
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Fetch Total Tasks Completed
-  fetch('/analytics/totalTasksCompleted')
-    .then(response => response.json())
-    .then(data => {
-      document.getElementById('tasks-completed').textContent = data.totalTasksCompleted;
-    })
-    .catch(error => {
-      console.error('Error fetching tasks completed:', error);
-      document.getElementById('tasks-completed').textContent = 'Error loading data';
-    });
-
-  // Fetch Total Points
-  fetch('/gamification/points')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      if (data.points !== undefined) {
-        document.getElementById('total-points').textContent = data.points;
-      } else {
-        document.getElementById('total-points').textContent = 'No data';
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching gamification points:', error);
-      document.getElementById('total-points').textContent = 'Error loading data';
-    });
-
-  // Fetch Task Progress
-  fetch('/dashboard/data')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      const progressBar = document.getElementById('task-progress-bar');
-      progressBar.style.width = data.taskProgress + '%';
-      progressBar.setAttribute('aria-valuenow', data.taskProgress);
-      progressBar.textContent = data.taskProgress + '%';
-    })
-    .catch(error => {
-      console.error('Error fetching dashboard data:', error);
-      const progressBar = document.getElementById('task-progress-bar');
-      progressBar.textContent = 'Error loading data';
+  document.addEventListener('DOMContentLoaded', function() {
+    // Fetch Total Tasks Completed
+    fetch('/analytics/totalTasksCompleted')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('tasks-completed').textContent = data.totalTasksCompleted;
+        })
+        .catch(error => {
+            console.error('Error fetching tasks completed:', error);
+            document.getElementById('tasks-completed').textContent = 'Error loading data';
+        });
+  
+    // Fetch Total Points
+    fetch('/gamification/points')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.points !== undefined) {
+          document.getElementById('total-points').textContent = data.points;
+        } else {
+          document.getElementById('total-points').textContent = 'No data';
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching gamification points:', error);
+        document.getElementById('total-points').textContent = 'Error loading data';
+      });
+  
+    // Fetch Task Progress
+    fetch('/analytics/tasksInProgress')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(tasksInProgressData => {
+        fetch('/analytics/totalTaskCompleted')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(totalTaskCompletedData => {
+            const progressBar = document.getElementById('task-progress-bar');
+            const progressLabel = document.getElementById('progress-label');
+            const totalTasks = tasksInProgressData.tasksInProgress + totalTaskCompletedData.totalTaskCompleted;
+            const completedPercentage = (totalTaskCompletedData.totalTaskCompleted / totalTasks) * 100; // Calculate completed tasks percentage
+            progressBar.value = completedPercentage;
+            progressLabel.textContent = completedPercentage.toFixed(2) + '%'; // Show progress with two decimal places
+          })
+          .catch(error => {
+            console.error('Error fetching total tasks completed:', error);
+            const progressBar = document.getElementById('task-progress-bar');
+            progressBar.value = 0;
+            const progressLabel = document.getElementById('progress-label');
+            progressLabel.textContent = 'Error loading data';
+          });
+      })
+      .catch(error => {
+        console.error('Error fetching task progress:', error);
+        const progressBar = document.getElementById('task-progress-bar');
+        progressBar.value = 0;
+        const progressLabel = document.getElementById('progress-label');
+        progressLabel.textContent = 'Error loading data';
+      });
+      Promise.all([
+        fetch('/analytics/totalTasksCompleted').then(res => res.json()),
+        fetch('/analytics/tasksInProgress').then(res => res.json())
+    ]).then(([completedData, inProgressData]) => {
+        const totalTasks = completedData.totalTasksCompleted + inProgressData.tasksInProgress;
+        const completedPercentage = (completedData.totalTasksCompleted / totalTasks) * 100;
+        const progressBar = document.getElementById('task-progress-bar');
+        const progressLabel = document.getElementById('progress-label');
+        progressBar.style.width = completedPercentage + '%';
+        progressLabel.textContent = completedPercentage.toFixed(2) + '%';
+    }).catch(error => {
+        console.error('Error fetching task data:', error);
+        const progressBar = document.getElementById('task-progress-bar');
+        progressBar.style.width = '0%';
+        const progressLabel = document.getElementById('progress-label');
+        progressLabel.textContent = 'Error loading data';
     });
 });
-</script>
+
+  
+  </script>
+  

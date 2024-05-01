@@ -10,6 +10,8 @@ const gamificationRoutes = require('./routes/gamificationRoutes'); // Import gam
 const profileRoutes = require('./routes/profileRoutes'); // Import profile routes
 const chatRoutes = require('./routes/chatRoutes'); // Import chat routes
 const analyticsRoutes = require('./routes/analyticsRoutes'); // Import analytics routes
+const rewardRoutes = require('./routes/rewardRoutes'); // Import reward routes
+const dashboardRoutes = require('./routes/dashboardRoutes'); // Import dashboard routes
 const http = require('http');
 const WebSocket = require('ws');
 const { parse } = require('cookie');
@@ -97,6 +99,12 @@ app.use(chatRoutes); // Registering chat routes
 
 // Analytics Routes
 app.use('/analytics', analyticsRoutes); // Registering analytics routes
+
+// Reward Routes
+app.use(rewardRoutes); // Registering reward routes
+
+// Dashboard Routes
+app.use('/api', dashboardRoutes); // Registering dashboard routes
 
 // Root path response
 app.get("/", (req, res) => {

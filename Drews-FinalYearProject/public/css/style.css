@@ -24,6 +24,12 @@ body {
 #sidebar-wrapper .sidebar-heading {
     padding: 0.875rem 1.25rem;
     font-size: 1.2rem;
+    color: #ffffff; /* Text color */
+    font-weight: bold; /* Make text bold */
+    text-align: center; /* Center align the heading */
+    margin-bottom: 20px; /* Add margin bottom for spacing */
+    background-color: #0062cc; /* Background color */
+    border-bottom: 2px solid #004085; /* Add a border bottom */
 }
 
 #sidebar-wrapper .list-group {
@@ -35,12 +41,14 @@ body {
     text-align: center;
     background-color: #0062cc; /* Adjusted to a different shade of blue for contrast */
     border: none; /* Remove default border */
-    color: #000000; /* Ensure text is visible */
+    color: #007bff; /* Text color adjusted to blue */
+    cursor: pointer; /* Add pointer cursor for better UX */
+    font-weight: bold; /* Make text bold */
 }
 
-#sidebar-wrapper .list-group-item:hover, #sidebar-wrapper .list-group-item:focus {
+#sidebar-wrapper .list-group-item:hover, 
+#sidebar-wrapper .list-group-item:focus {
     background-color: #0056b3; /* Hover background color */
-    color: #fff; /* Hover text color */
     text-decoration: none;
 }
 
@@ -49,6 +57,7 @@ body {
     width: 100%;
     transition: all 0.3s ease;
 }
+
 
 @media (max-width: 768px) {
     body {
@@ -209,6 +218,14 @@ form {
     border-radius: 5px;
     cursor: pointer;
 }
+.dashboard-widgets .progress {
+    background-color: transparent; /* Update to transparent background */
+  }
+  
+  .dashboard-widgets .progress-bar {
+    background-color: #28a745; /* Set progress bar background color to green */
+  }
+  
 
 /* Dashboard Widgets Styles */
 .dashboard-widgets .widget {

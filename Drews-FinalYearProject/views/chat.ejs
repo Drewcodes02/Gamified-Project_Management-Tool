@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('partials/_head.ejs') %>
-  <body>
+  <body style="background-color: #3498db;">
 <%- include('partials/_header.ejs') %>
-    <main role="main" class="container mt-4">
+<main role="main" class="container mt-4" style="color: #fff;">
+  <div class="jumbotron text-center mb-4" style="background-color: #3498db;">
+
       <h1>Chat</h1>
       <div class="row">
         <div class="col-md-4">
-          <ul id="userList" class="list-group">
+          <ul id="userList" class="list-group" style="background-color: #2980b9;">
             <% users.forEach(function(user) { %>
-              <li class="list-group-item list-group-item-action" onclick="selectUser('<%= user._id %>', '<%= user.username %>')"><%= user.username %></li>
+              <li class="list-group-item list-group-item-action" onclick="selectUser('<%= user._id %>', '<%= user.username %>')" style="color: #000; cursor: pointer;"><%= user.username %></li>
             <% }); %>
           </ul>
         </div>
         <div class="col-md-8">
-          <div id="chatMessagesContainer" class="chat-messages-container" style="height: 300px; overflow-y: scroll;">
+          <div id="chatMessagesContainer" class="chat-messages-container" style="height: 300px; overflow-y: scroll; background-color: #2980b9; color: #fff; padding: 10px;">
             <!-- Chat messages will be dynamically inserted here by the client-side script -->
           </div>
-          <input type="text" id="messageInput" placeholder="Type a message..." class="form-control mt-3">
-          <button id="sendMessageBtn" class="btn btn-primary mt-2">Send</button>
+          <input type="text" id="messageInput" placeholder="Type a message..." class="form-control mt-3" style="background-color: #2980b9; color: #fff;">
+          <button id="sendMessageBtn" class="btn btn-primary mt-2" style="background-color: #3498db; color: #fff;">Send</button>
         </div>
       </div>
       <input type="hidden" id="userId" value="<%= userId %>">
@@ -59,6 +61,7 @@
         const chatMessagesContainer = document.getElementById('chatMessagesContainer');
         const messageElement = document.createElement('div');
         messageElement.textContent = `${messageData.sender}: ${messageData.message}`;
+        messageElement.style.marginBottom = '5px'; // Add margin between messages
         chatMessagesContainer.appendChild(messageElement);
         chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight; // Scroll to the bottom to show the latest message
     }

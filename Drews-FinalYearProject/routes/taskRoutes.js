@@ -47,7 +47,7 @@ router.get('/tasks', isAuthenticated, async (req, res) => {
   try {
     const tasks = await Task.find({}).exec();
     console.log('Fetched all tasks');
-    res.render('tasks', { tasks: tasks });
+    res.render('tasks', { tasks: tasks }); // Changed from res.json to res.render to correctly return rendered view
   } catch (error) {
     console.error(`Error fetching tasks: ${error.message}`, error.stack);
     res.status(500).send(error);
@@ -139,6 +139,61 @@ router.delete('/tasks/:id', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error(`Error deleting task with ID ${req.params.id}: ${error.message}`, error.stack);
     res.status(500).send(error);
+  }
+});
+
+// Add a new task to the To-do List
+router.post('/tasks/addTodo', isAuthenticated, async (req, res) => {
+  try {
+    const { title, description, dueDate } = req.body;
+    const newTask = new Task({
+      title,
+      description,
+      assignedTo: req.session.userId, // Assign the task to the current user
+      startDate: new Date(), // Set the start date to the current date
+      dueDate,
+      progress: 0, // Start progress at 0%
+      status: 'inProgress' // Mark the task as in progress
+    });
+    await newTask.save();
+
+    console.log(`New to-do added: ${newTask.title}`);
+    res.status(201).send({ message: "To-do successfully added", task: newTask });
+  } catch (error) {
+    console.error(`Error adding new to-do: ${error.message}`, error.stack);
+    res.status(400).send(error);
+  }
+});
+
+// Route to mark a task as completed
+router.post('/tasks/:id/complete', isAuthenticated, async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+
+    if (!task) {
+      return res.status(404).send({ message: "Task not found." });
+    }
+
+    // Update task status to 'completed'
+    task.status = 'completed';
+    task.progress = 100;
+    await task.save();
+
+    // Award points to each assigned user
+    const updatePromises = task.assignedTo.map(async (userId) => {
+      const gamification = await Gamification.findOne({ userId });
+      if (gamification) {
+        gamification.addPoints(10); // Award 10 points for task completion
+        await gamification.save();
+      }
+    });
+
+    await Promise.all(updatePromises);
+
+    res.send({ message: "Task marked as completed and points awarded to all assigned users.", task });
+  } catch (error) {
+    console.error(`Error marking task as complete: ${error.message}`, error.stack);
+    res.status(500).send({ message: "Error updating task status." });
   }
 });
 

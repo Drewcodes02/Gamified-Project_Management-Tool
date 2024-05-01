@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('partials/_head.ejs') %>
-  <body>
+  <body style="background-color: #3498db; color: #fff;">
 <%- include('partials/_header.ejs') %>
     <main role="main" class="container mt-4">
-      <h1>Profile</h1>
-      <div class="my-4">
+      <div class="card mb-4 shadow" style="background-color: #fff; border-radius: 10px; padding: 20px; text-align: center;">
+        <h1 class="mb-4">Profile</h1>
         <h2>Username: <%= username %></h2>
         <h3>Points: <%= points %></h3>
         <h3>Achievements</h3>
@@ -14,47 +14,86 @@
             <li><%= achievement %></li>
           <% }); %>
         </ul>
-        <h3>Performance</h3>
-        <p>Tasks Completed: <%= tasksCompleted %></p>
-        <p>Tasks In Progress: <%= tasksInProgress %></p>
-        <p>Average Completion Time: <%= averageCompletionTime %> milliseconds</p>
-        <div>
+        <div style="text-align: left; margin: 0 auto; display: table;">
+          <p><strong>Total Tasks Completed:</strong> <span id="totalTasksCompleted">Loading...</span></p>
+          <p><strong>Tasks In Progress:</strong> <span id="tasksInProgress">Loading...</span></p>
+          <p><strong>Average Completion Time:</strong> <span id="averageCompletionTime">Loading...</span></p>
+        </div>
+        <div class="mt-4">
           <canvas id="tasksCompletionChart"></canvas>
         </div>
       </div>
     </main>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        var ctx = document.getElementById('tasksCompletionChart').getContext('2d');
-        var chart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: ['Tasks Completed', 'Tasks In Progress'],
-            datasets: [{
-              label: 'Tasks',
-              data: [<%= tasksCompleted %>, <%= tasksInProgress %>],
-              backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)'
-              ],
-              borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)'
-              ],
-              borderWidth: 1
-            }]
-          },
-          options: {
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            }
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var ctx = document.getElementById('tasksCompletionChart').getContext('2d');
+    var tasksChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Tasks Completed', 'Tasks In Progress'],
+        datasets: [{
+          label: 'Tasks',
+          data: [0, 0], // Initialize with zeros
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
           }
-        });
+        }
+      }
+    });
+
+    // Fetch data for totalTasksCompleted and update chart
+    fetch('/analytics/totalTasksCompleted')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('totalTasksCompleted').textContent = data.totalTasksCompleted;
+        tasksChart.data.datasets[0].data[0] = data.totalTasksCompleted; // Update chart data
+        tasksChart.update(); // Refresh chart
+      })
+      .catch(error => {
+        console.error('Error fetching total tasks completed:', error);
+        document.getElementById('totalTasksCompleted').textContent = 'Error loading data';
       });
-    </script>
-  </body>
+
+    // Fetch data for tasksInProgress and update chart
+    fetch('/analytics/tasksInProgress')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('tasksInProgress').textContent = data.tasksInProgress;
+        tasksChart.data.datasets[0].data[1] = data.tasksInProgress; // Update chart data
+        tasksChart.update(); // Refresh chart
+      })
+      .catch(error => {
+        console.error('Error fetching tasks in progress:', error);
+        document.getElementById('tasksInProgress').textContent = 'Error loading data';
+      });
+
+    // Average Completion Time fetch can remain unchanged, as it does not affect the chart
+    fetch('/analytics/averageCompletionTime')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('averageCompletionTime').textContent = (data.averageCompletionTime / (1000 * 60 * 60 * 24)).toFixed(2) + ' days';
+      })
+      .catch(error => {
+        console.error('Error fetching average completion time:', error);
+        document.getElementById('averageCompletionTime').textContent = 'Error loading data';
+      });
+  });
+</script>
 <%- include('partials/_footer.ejs') %>
+  </body>
 </html>

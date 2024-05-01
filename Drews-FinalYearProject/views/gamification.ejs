@@ -1,39 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('partials/_head.ejs') %>
-  <body>
+  <body style="background-color: #f0f5f9;">
 <%- include('partials/_header.ejs') %>
-    <main role="main" class="container mt-4">
-      <h1>Gamification</h1>
-      <div class="my-4">
-        <h2>Points: <%= points %></h2>
-        <h3>Achievements</h3>
-        <ul>
-          <% achievements.forEach(function(achievement) { %>
-            <li><%= achievement %></li>
-          <% }); %>
-        </ul>
-      </div>
-      <div class="my-4">
-        <h3>Leaderboard</h3>
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Username</th>
-              <th scope="col">Points</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% leaderboard.forEach(function(user, index) { %>
-              <tr>
-                <th scope="row"><%= index + 1 %></th>
-                <td><%= user.username %></td>
-                <td><%= user.points %></td>
-              </tr>
-            <% }); %>
-          </tbody>
-        </table>
+    <main role="main" class="container-fluid p-0">
+      <div class="jumbotron m-0 text-center" style="background-color: #3498db; color: #fff;">
+        <h1 class="display-4">Gamification</h1>
+        <p class="lead">Earn points, climb the leaderboard, and unlock achievements!</p>
+        <hr class="my-4">
+        <div class="row">
+          <div class="col-md-6 offset-md-3">
+            <h2>Your Points:</h2>
+            <div class="points-display">
+              <h3><%= points %></h3>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-8 offset-md-2">
+            <h2>Leaderboard</h2>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Position</th>
+                  <th scope="col">Username</th>
+                  <th scope="col">Points</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% leaderboard.forEach(function(user, index) { %>
+                  <tr>
+                    <th scope="row"><%= index + 1 %></th>
+                    <td><%= user.username %></td>
+                    <td><%= user.points %></td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </main>
   </body>

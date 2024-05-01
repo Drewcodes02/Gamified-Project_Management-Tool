@@ -2,6 +2,7 @@ const express = require('express');
 const User = require('../models/User');
 const Gamification = require('../models/gamificationModel');
 const UserSettings = require('../models/userSettingsModel'); // Import the UserSettings model
+const Task = require('../models/taskModel'); // Import the Task model
 const bcrypt = require('bcrypt');
 const { isAuthenticated } = require('./middleware/authMiddleware'); // Updated path
 const analyticsController = require('../controllers/analyticsController');
@@ -20,6 +21,7 @@ router.get('/profile', isAuthenticated, async (req, res) => {
       return res.status(404).send('Gamification profile not found');
     }
     const userSettings = await UserSettings.findOne({ userId: req.session.userId });
+    const tasksInProgress = await Task.countDocuments({ assignedTo: req.session.userId, status: 'In Progress' });
     const userPerformance = await analyticsController.getUserSpecificPerformance(req.session.userId);
     if (!userPerformance) {
       console.log(`Performance data for user ${user.username} not found`);
@@ -30,7 +32,7 @@ router.get('/profile', isAuthenticated, async (req, res) => {
       points: gamificationProfile.points,
       achievements: gamificationProfile.achievements,
       tasksCompleted: userPerformance.tasksCompleted,
-      tasksInProgress: userPerformance.tasksInProgress,
+      tasksInProgress: tasksInProgress, // Updated to use the newly fetched tasks in progress count
       averageCompletionTime: userPerformance.averageCompletionTime,
       userSettings: userSettings || {}
     });

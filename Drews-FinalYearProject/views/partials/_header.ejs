@@ -1,25 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <% include('../partials/_head.ejs') %>
+    <%- include('_head.ejs') %>
 </head>
+<style>
+    .sidebar-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+    }
+    </style>
 <body>
     <div class="d-flex" id="wrapper">
         <!-- Sidebar -->
         <div class="bg-light border-right" id="sidebar-wrapper">
-            <div class="sidebar-heading">Task Triumph</div>
+            <div class="sidebar-heading">
+                <!-- Add an icon before the text with href link -->
+                <a href="/"></a> Task Triumph
+            </div>
             <div class="list-group list-group-flush">
-                <a href="/" class="list-group-item list-group-item-action bg-light">Home</a>
+                <a href="/" class="list-group-item list-group-item-action bg-light">
+                    <img src="https://i.ibb.co/gVkT83d/icons8-home-50.png" alt="Home Icon" class="sidebar-icon"> Home
+                </a>
                 <% if (session && session.userId) { %>
-                <a href="/tasks" class="list-group-item list-group-item-action bg-light">Tasks</a>
-                <a href="/gamification" class="list-group-item list-group-item-action bg-light">Gamification</a>
-                <a href="/profile" class="list-group-item list-group-item-action bg-light">Profile</a>
-                <a href="/analytics" class="list-group-item list-group-item-action bg-light">Analytics</a>
-                <a href="/chat" class="list-group-item list-group-item-action bg-light">Chat</a>
-                <a href="/settings" class="list-group-item list-group-item-action bg-light">Settings</a>
-                <a href="/auth/logout" class="list-group-item list-group-item-action bg-light">Logout</a>
+                <a href="/tasks" class="list-group-item list-group-item-action bg-light">
+                    <img src="https://i.ibb.co/1f10dzh/icons8-task-50.png" alt="Tasks Icon" class="sidebar-icon"> Tasks
+                </a>
+                <a href="/gamification" class="list-group-item list-group-item-action bg-light">
+                    <img src="https://i.ibb.co/mSxWj8F/icons8-game-50.png" alt="Gamification Icon" class="sidebar-icon"> Gamification
+                </a>
+                <a href="/analytics" class="list-group-item list-group-item-action bg-light">
+                    <img src="https://i.ibb.co/xHZqPfy/icons8-analytics-50.png" alt="Analytics Icon" class="sidebar-icon"> Analytics
+                </a>
+                <a href="/chat" class="list-group-item list-group-item-action bg-light">
+                    <img src="https://i.ibb.co/yqqDYLM/icons8-chat-50.png" alt="Chat Icon" class="sidebar-icon"> Chat
+                </a>
+                <a href="/rewards/page" class="list-group-item list-group-item-action bg-light">
+                    <img src="https://i.ibb.co/8dyymGn/icons8-prize-50.png" alt="Rewards Icon" class="sidebar-icon"> Rewards
+                </a>
+                <a href="/profile" class="list-group-item list-group-item-action bg-light">
+                    <img src="https://i.ibb.co/gwjswc3/icons8-profile-50.png" alt="Profile Icon" class="sidebar-icon"> Profile
+                </a>
+
+                <a href="/settings" class="list-group-item list-group-item-action bg-light">
+                    <img src="https://i.ibb.co/qg3J8vM/icons8-setting-50.png" alt="Settings Icon" class="sidebar-icon"> Settings
+                </a>
+                <a href="/auth/logout" class="list-group-item list-group-item-action bg-light">
+                    <img src="https://i.ibb.co/FY5Jf34/icons8-logout-50.png" alt="Logout Icon" class="sidebar-icon"> Logout
+                </a>
                 <% } else { %>
-                <a href="/auth/login" class="list-group-item list-group-item-action bg-light">Login</a>
+                <a href="/auth/login" class="list-group-item list-group-item-action bg-light">
+                    <img src="https://i.ibb.co/FY5Jf34/icons8-logout-50.png" alt="Login Icon" class="sidebar-icon"> Login
+                </a>
                 <% } %>
             </div>
         </div>
