@@ -118,8 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     window.updateTask = function(taskId) {
-        // Functionality to open the update modal and populate it with task data
-        // Fetch task data
+    
         fetch(`/tasks/${taskId}`, {
             headers: {
                 'Content-Type': 'application/json',
@@ -132,7 +131,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(task => {
-            // Populate modal fields with task data
             document.getElementById('updateTaskTitle').value = task.title;
             document.getElementById('updateTaskDescription').value = task.description;
             document.getElementById('updateTaskAssignedTo').value = task.assignedTo.join(', ');
@@ -140,7 +138,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('updateTaskDueDate').value = task.dueDate.slice(0, 10); // Format date for input
             document.getElementById('updateTaskProgress').value = task.progress;
             document.getElementById('updateTaskStatus').value = task.status;
-            // Show the update modal
             var updateModal = new bootstrap.Modal(document.getElementById('updateTaskModal'));
             updateModal.show();
         })
@@ -151,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     window.deleteTask = function(taskId) {
-        if (!confirm('Are you sure you want to delete this task?')) return; // Add confirmation before deletion
+        if (!confirm('Are you sure you want to delete this task?')) return; 
         
         fetch(`/tasks/${taskId}`, {
             method: 'DELETE',
@@ -168,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             console.log('Task deleted:', data);
             alert('Task deleted successfully!');
-            window.location.reload(); // Reload to update the task list
+            window.location.reload(); 
         })
         .catch(error => {
             console.error('Error deleting task:', error);
@@ -176,9 +173,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Modify WebSocket functionality for real-time chat to dynamically determine the WebSocket URL
     const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-    const chatSocket = new WebSocket(protocol + window.location.host + '/chat'); // Dynamically adjust to the current host and protocol
+    const chatSocket = new WebSocket(protocol + window.location.host + '/chat'); 
     chatSocket.onmessage = function(event) {
         try {
             const messageData = JSON.parse(event.data);
@@ -195,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please select a user to send a message.');
             return;
         }
-        const messageData = { message: message, recipient: selectedUser }; // recipient is the username of the selected user
+        const messageData = { message: message, recipient: selectedUser }; 
         chatSocket.send(JSON.stringify(messageData));
     }
 

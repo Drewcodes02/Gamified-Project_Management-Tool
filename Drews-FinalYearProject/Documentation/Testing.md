@@ -2,9 +2,7 @@
 
 ## Overview
 
-This document outlines the testing strategies and methodologies employed in the development of Drews-FinalYearProject, a web-based project management tool with gamification elements. The project's testing approach is designed to ensure reliability, performance, and user satisfaction through a combination of automated and manual testing techniques.
-
-This testing strategies and methodologies employed in my development. A web based p[roject management tool with gamification elements. This is to ensure reliability, performance and user satisfaction through a combination of automated and manual testing 
+This testing strategies and methodologies employed in my development. A web based project management tool with gamification elements. This is to ensure reliability, performance and user satisfaction through a combination of automated and manual testing 
 ## Unit Testing
 
 ### Backend
@@ -17,7 +15,7 @@ This testing strategies and methodologies employed in my development. A web base
 
 - **Tools Used**: Jest and Testing Libraries for frontend components.
 - **Scope**: JavaScript utility functions.
-- **Process**: Frontend unit tests verify that components render correctly with given props and that user interactions like clicking buttons produce the expected outcome.
+- **Process**: Frontend unit tests verify that components render correctly and that user interactions like clicking buttons produce the expected outcome.
 
 ## Integration Testing
 

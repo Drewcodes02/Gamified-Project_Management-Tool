@@ -20,7 +20,7 @@ exports.getDashboardData = async (req, res) => {
     const taskProgress = totalTasksAssigned > 0 ? (tasksCompleted / totalTasksAssigned) * 100 : 0;
 
     // For messages, returning a fixed value as per current requirement
-    const messagesCount = 3; // Placeholder for future implementation
+    const messagesCount = 0; // Placeholder for future implementation
 
     // Update the profile page data fetching logic to include tasks in progress
     const profileData = {
