@@ -1,87 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('partials/_head.ejs') %>
-  <body style="background-color: #3498db;">
+<body style="background-color: #3498db;">
 <%- include('partials/_header.ejs') %>
-    <main role="main" class="container mt-4" style="color: #fff;">
-      <div class="text-center">
-        <h1>Welcome to Task Triumph: Victory in Collaboration</h1>
-        <p></p>
+<main role="main" class="container mt-4" style="color: #fff;">
+  <div class="text-center">
+    <h1>Welcome to Task Triumph: Victory in Collaboration</h1>
+    <p></p>
+  </div>
+  <%- include('partials/_dashboardWidgets.ejs') %>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card" style="background-color: #fff; border-radius: 10px; padding: 20px;">
+        <canvas id="userPerformanceChart" width="800" height="400"></canvas>
       </div>
-      <%- include('partials/_dashboardWidgets.ejs') %>
-      <div class="row">
-        <div class="col-md-8">
-          <div class="card" style="background-color: #fff; border-radius: 10px; padding: 20px;">
-            <canvas id="taskProgressChart" width="800" height="400"></canvas>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card" style="background-color: #fff; border-radius: 10px; padding: 20px;">
-            <canvas id="userPerformanceChart" width="400" height="400"></canvas>
-          </div>
-        </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card" style="background-color: #fff; border-radius: 10px; padding: 20px;">
+        <canvas id="taskProgressChart" width="400" height="400"></canvas>
       </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Fake data
-            fetch('/analytics/averageCompletionTime')
-  .then(response => response.json())
-  .then(data => {
-    const avgTimeDays = data.averageCompletionTime / (1000 * 60 * 60 * 24);
-    const ctxLine = document.getElementById('taskProgressChart').getContext('2d');
-    new Chart(ctxLine, {
-      type: 'line',
-      data: {
-        labels: ['January', 'February', 'March', 'April', 'May'], // Adjust labels as needed
-        datasets: [{
-          label: 'Average Completion Time (days)',
-          data: [avgTimeDays, avgTimeDays, avgTimeDays, avgTimeDays, avgTimeDays],
-          fill: false,
-          borderColor: 'rgba(255, 99, 132, 1)',
-          tension: 0.1
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-            color: '#fff'
-          }
-        }
-      }
-    });
-  })
-  .catch(error => {
-    console.error('Error fetching average completion time:', error);
-  });
-  // Fetching data for tasks completed and in progress, then updating the pie chart
-Promise.all([
-  fetch('/analytics/totalTasksCompleted').then(res => res.json()),
-  fetch('/analytics/tasksInProgress').then(res => res.json())
-]).then(([completedData, inProgressData]) => {
-  const ctxPie = document.getElementById('userPerformanceChart').getContext('2d');
-  new Chart(ctxPie, {
-    type: 'pie',
-    data: {
-      labels: ['Completed', 'In Progress'],
-      datasets: [{
-        label: 'Task Status',
-        data: [completedData.totalTasksCompleted, inProgressData.tasksInProgress],
-        backgroundColor: [
-          'rgb(255, 99, 132)', // Red color
-          'rgb(255, 205, 86)' // Yellow color
-        ]
-      }]
-    }
-  });
-}).catch(error => {
-  console.error('Error fetching task data:', error);
-});
+    </div>
+  </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Fetching user performance data for line chart
+    fetch('/analytics/userPerformance')
+      .then(response => response.json())
+      .then(data => {
+        const usernames = [];
+        const tasksCompleted = [];
+        data.userPerformance.forEach(user => {
+          usernames.push(user.username);
+          tasksCompleted.push(user.tasksCompleted);
         });
+        const ctxLine = document.getElementById('userPerformanceChart').getContext('2d');
+        new Chart(ctxLine, {
+          type: 'line',
+          data: {
+            labels: usernames,
+            datasets: [{
+              label: 'Tasks Completed',
+              data: tasksCompleted,
+              fill: false,
+              borderColor: 'rgba(255, 99, 132, 1)',
+              tension: 0.1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+                color: '#fff'
+              }
+            }
+          }
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching user performance data:', error);
+      });
 
-    </script>
-    </main>
-  </body>
+    // Fetching data for tasks completed and in progress, then updating the pie chart
+    Promise.all([
+      fetch('/analytics/totalTasksCompleted').then(res => res.json()),
+      fetch('/analytics/tasksInProgress').then(res => res.json())
+    ]).then(([completedData, inProgressData]) => {
+      const ctxPie = document.getElementById('taskProgressChart').getContext('2d');
+      new Chart(ctxPie, {
+        type: 'pie',
+        data: {
+          labels: ['Completed', 'In Progress'],
+          datasets: [{
+            label: 'Task Status',
+            data: [completedData.totalTasksCompleted, inProgressData.tasksInProgress],
+            backgroundColor: [
+              'rgb(255, 99, 132)', // Red color
+              'rgb(255, 205, 86)' // Yellow color
+            ]
+          }]
+        }
+      });
+    }).catch(error => {
+      console.error('Error fetching task data:', error);
+    });
+  });
+</script>
+</main>
+</body>
 <%- include('partials/_footer.ejs') %>
 </html>

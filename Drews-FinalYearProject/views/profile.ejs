@@ -4,7 +4,7 @@
   <body style="background-color: #3498db; color: #fff;">
 <%- include('partials/_header.ejs') %>
     <main role="main" class="container mt-4">
-      <div class="card mb-4 shadow" style="background-color: #fff; border-radius: 10px; padding: 20px; text-align: center;">
+      <div class="card mb-4 shadow" style="background-color: #fff; border-radius: 10px; padding: 20px; text-align: left;">
         <h1 class="mb-4">Profile</h1>
         <h2>Username: <%= username %></h2>
         <h3>Points: <%= points %></h3>
@@ -14,10 +14,9 @@
             <li><%= achievement %></li>
           <% }); %>
         </ul>
-        <div style="text-align: left; margin: 0 auto; display: table;">
+        <div style="display: table;">
           <p><strong>Total Tasks Completed:</strong> <span id="totalTasksCompleted">Loading...</span></p>
           <p><strong>Tasks In Progress:</strong> <span id="tasksInProgress">Loading...</span></p>
-          <p><strong>Average Completion Time:</strong> <span id="averageCompletionTime">Loading...</span></p>
         </div>
         <div class="mt-4">
           <canvas id="tasksCompletionChart"></canvas>

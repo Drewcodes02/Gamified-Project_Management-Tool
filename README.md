@@ -4,14 +4,15 @@ A web-based project management tool designed to enhance user engagement and prod
 
 ## Overview
 
-The project is built using a Node.js and Express backend with MongoDB for data storage, ensuring a robust and scalable solution. Front-end development utilizes HTML, CSS, Bootstrap, and Vanilla JavaScript to create a responsive and engaging user experience. WebSocket is implemented for real-time communication features.
+The project is built using a Node.js and Express backend with MongoDB for data storage, ensuring a robust and scalable solution. Front-end development utilizes HTML, CSS, Bootstrap, and Vanilla JavaScript to create a responsive and engaging user experience. WebSocket is implemented for real-time communication features, and user authentication is handled using JSON Web Tokens (JWT).
 
 ## Features
 
-- Task creation and management
-- Real-time progress tracking with analytics
-- Real-time text chat for collaboration
-- Gamification elements: points system, achievements, and leaderboard
+- Task creation and management with start and due dates, progress tracking, and assignment to specific users or groups.
+- Real-time progress tracking with analytics and graphical representations of task completion and user performance.
+- Gamification elements including a points system, achievements, and a leaderboard to encourage user engagement.
+- Real-time text chat for collaboration among users.
+- A rewards system where users can redeem points for rewards such as time off or gift cards.
 - User authentication and authorization with JSON Web Tokens (JWT)
 
 ## Getting started
@@ -30,6 +31,4 @@ The project is built using a Node.js and Express backend with MongoDB for data s
 4. Run the project: `npm start`
 5. Navigate to `http://localhost:3000` in your web browser
 
-### License
 
-Copyright (c) 2024. All rights reserved.

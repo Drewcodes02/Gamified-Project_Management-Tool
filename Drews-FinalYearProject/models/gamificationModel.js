@@ -8,8 +8,8 @@ const gamificationSchema = new Schema({
 });
 
 // Method to add points
-gamificationSchema.methods.addPoints = function(points) {
-  this.points += points;
+gamificationSchema.methods.addPoints = function(points) { 
+  this.points += points; 
   this.checkMilestones();
 };
 
@@ -21,7 +21,7 @@ gamificationSchema.methods.checkMilestones = function() {
     console.log("Awarded achievement for completing the first task.");
   }
 
-  const milestones = [5000, 10000, 15000]; // Example milestones
+  const milestones = [5000, 10000, 15000]; 
   milestones.forEach(milestone => {
     if (this.points >= milestone && !this.achievements.includes(`Points: ${milestone}`)) {
       this.achievements.push(`Points: ${milestone}`);

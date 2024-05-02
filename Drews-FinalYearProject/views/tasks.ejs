@@ -118,6 +118,7 @@
               <p><%= task.description %></p>
               <p>Assigned to: <%= task.assignedTo.join(', ') %></p>
               <p>Start date: <%= new Date(task.startDate).toLocaleDateString() %></p>
+              <p>Due date: <%= new Date(task.dueDate).toLocaleDateString() %></p>
               <div class="progress" style="width: 100%;">
                 <div class="progress-bar bg-success" role="progressbar" style="width: <%= task.progress %>%;" aria-valuenow="<%= task.progress %>" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
